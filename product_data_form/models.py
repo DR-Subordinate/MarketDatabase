@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Product(models.Model):
-    date = models.DateField()
+    date = models.DateField(blank=True)
     market_name = models.CharField(max_length=200, blank=True)
     number = models.CharField(max_length=200, blank=True)
     brand_name = models.CharField(max_length=200, blank=True)
