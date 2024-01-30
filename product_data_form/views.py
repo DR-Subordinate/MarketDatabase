@@ -14,4 +14,9 @@ def index(request):
     return render(request, "product_data_form/index.html", {"form": form})
 
 def search(request):
-    pass
+    if request.method == "GET":
+        if request.GET.get("search-query"):
+            products = Product.objects.filter(name__icontains=request.GET.get("search-query"))
+        else:
+            return render(request, "product_data_form/search.html")
+    return render(request, "product_data_form/search.html", {"products": products})
