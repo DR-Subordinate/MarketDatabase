@@ -12,3 +12,6 @@ def index(request):
     else:
         form = ProductForm()
     return render(request, "product_data_form/index.html", {"form": form})
+
+def search(request):
+    pass
