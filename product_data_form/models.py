@@ -14,3 +14,6 @@ class Product(models.Model):
     detail = models.TextField(blank=True)
     price = models.CharField(max_length=200, blank=True)
     winning_bid = models.CharField(max_length=200, blank=True)
+
+    def __str__(self):
+        return self.name
