@@ -4,3 +4,20 @@
     <input type="submit" value="検索">
   </fieldset>
 </form>
+
+{% for product in products %}
+  <div style="border: solid 1px">
+    <p>{{ product.date }}</p>
+    <p>{{ product.market_name }}</p>
+    <p>{{ product.number}}</p>
+    <p>{{ product.brand_name}}</p>
+    <p>{{ product.name}}</p>
+    <p>{{ product.model_number}}</p>
+    <p>{{ product.serial_number}}</p>
+    <p>{{ product.material_color}}</p>
+    <p>{{ product.condition}}</p>
+    <p>{{ product.detail}}</p>
+    <p>{{ product.price}}</p>
+    <p>{{ product.winning_bid}}</p>
+  </div>
+{% endfor %}
