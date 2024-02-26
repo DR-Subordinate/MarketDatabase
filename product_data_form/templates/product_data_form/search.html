@@ -6,18 +6,38 @@
 </form>
 
 {% for product in products %}
-  <div style="border: solid 1px">
-    <p>{{ product.date }}</p>
-    <p>{{ product.market_name }}</p>
-    <p>{{ product.number}}</p>
-    <p>{{ product.brand_name}}</p>
-    <p>{{ product.name}}</p>
-    <p>{{ product.model_number}}</p>
-    <p>{{ product.serial_number}}</p>
-    <p>{{ product.material_color}}</p>
-    <p>{{ product.condition}}</p>
-    <p>{{ product.detail}}</p>
-    <p>{{ product.price}}</p>
-    <p>{{ product.winning_bid}}</p>
-  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>日付</th>
+        <th>市場名</th>
+        <th>番号</th>
+        <th>ブランド名</th>
+        <th>商品名</th>
+        <th>型番</th>
+        <th>製造番号</th>
+        <th>素材・カラー</th>
+        <th>状態</th>
+        <th>詳細・備考</th>
+        <th>値段</th>
+        <th>落札価格</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ product.date }}</td>
+        <td>{{ product.market_name }}</td>
+        <td>{{ product.number}}</td>
+        <td>{{ product.brand_name}}</td>
+        <td>{{ product.name}}</td>
+        <td>{{ product.model_number}}</td>
+        <td>{{ product.serial_number}}</td>
+        <td>{{ product.material_color}}</td>
+        <td>{{ product.condition}}</td>
+        <td>{{ product.detail}}</td>
+        <td>{{ product.price}}</td>
+        <td>{{ product.winning_bid}}</td>
+      </tr>
+    </tbody>
+  </table>
 {% endfor %}
