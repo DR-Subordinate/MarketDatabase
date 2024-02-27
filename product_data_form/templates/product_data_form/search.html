@@ -8,7 +8,7 @@
     </fieldset>
   </form>
 
-  {% for product in products %}
+  {% if products %}
     <table>
       <thead>
         <tr>
@@ -27,21 +27,23 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>{{ product.date }}</td>
-          <td>{{ product.market_name }}</td>
-          <td>{{ product.number}}</td>
-          <td>{{ product.brand_name}}</td>
-          <td>{{ product.name}}</td>
-          <td>{{ product.model_number}}</td>
-          <td>{{ product.serial_number}}</td>
-          <td>{{ product.material_color}}</td>
-          <td>{{ product.condition}}</td>
-          <td>{{ product.detail}}</td>
-          <td>{{ product.price}}</td>
-          <td>{{ product.winning_bid}}</td>
-        </tr>
+        {% for product in products %}
+          <tr>
+            <td>{{ product.date }}</td>
+            <td>{{ product.market_name }}</td>
+            <td>{{ product.number}}</td>
+            <td>{{ product.brand_name}}</td>
+            <td>{{ product.name}}</td>
+            <td>{{ product.model_number}}</td>
+            <td>{{ product.serial_number}}</td>
+            <td>{{ product.material_color}}</td>
+            <td>{{ product.condition}}</td>
+            <td>{{ product.detail}}</td>
+            <td>{{ product.price}}</td>
+            <td>{{ product.winning_bid}}</td>
+          </tr>
+        {% endfor %}
       </tbody>
     </table>
-  {% endfor %}
+  {% endif %}
 {% endblock %}
