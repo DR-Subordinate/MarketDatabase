@@ -1,43 +1,47 @@
-<form method="get">
-  <fieldset>
-    <input type="search" name="search-query">
-    <input type="submit" value="検索">
-  </fieldset>
-</form>
+{% extends "product_data_form/base.html" %}
 
-{% for product in products %}
-  <table>
-    <thead>
-      <tr>
-        <th>日付</th>
-        <th>市場名</th>
-        <th>番号</th>
-        <th>ブランド名</th>
-        <th>商品名</th>
-        <th>型番</th>
-        <th>製造番号</th>
-        <th>素材・カラー</th>
-        <th>状態</th>
-        <th>詳細・備考</th>
-        <th>値段</th>
-        <th>落札価格</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>{{ product.date }}</td>
-        <td>{{ product.market_name }}</td>
-        <td>{{ product.number}}</td>
-        <td>{{ product.brand_name}}</td>
-        <td>{{ product.name}}</td>
-        <td>{{ product.model_number}}</td>
-        <td>{{ product.serial_number}}</td>
-        <td>{{ product.material_color}}</td>
-        <td>{{ product.condition}}</td>
-        <td>{{ product.detail}}</td>
-        <td>{{ product.price}}</td>
-        <td>{{ product.winning_bid}}</td>
-      </tr>
-    </tbody>
-  </table>
-{% endfor %}
+{% block content %}
+  <form method="get">
+    <fieldset>
+      <input type="search" name="search-query">
+      <input type="submit" value="検索">
+    </fieldset>
+  </form>
+
+  {% for product in products %}
+    <table>
+      <thead>
+        <tr>
+          <th>日付</th>
+          <th>市場名</th>
+          <th>番号</th>
+          <th>ブランド名</th>
+          <th>商品名</th>
+          <th>型番</th>
+          <th>製造番号</th>
+          <th>素材・カラー</th>
+          <th>状態</th>
+          <th>詳細・備考</th>
+          <th>値段</th>
+          <th>落札価格</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ product.date }}</td>
+          <td>{{ product.market_name }}</td>
+          <td>{{ product.number}}</td>
+          <td>{{ product.brand_name}}</td>
+          <td>{{ product.name}}</td>
+          <td>{{ product.model_number}}</td>
+          <td>{{ product.serial_number}}</td>
+          <td>{{ product.material_color}}</td>
+          <td>{{ product.condition}}</td>
+          <td>{{ product.detail}}</td>
+          <td>{{ product.price}}</td>
+          <td>{{ product.winning_bid}}</td>
+        </tr>
+      </tbody>
+    </table>
+  {% endfor %}
+{% endblock %}
