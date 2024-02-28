@@ -15,7 +15,6 @@
     値段: {{ form.price.errors }} {{ form.price }}<br>
     落札価格: {{ form.winning_bid.errors }} {{ form.winning_bid }}<br>
     {{ form.non_field_errors }}
-    {% csrf_token %}
     <input type="submit" value="保存">
   </fieldset>
   </form>
