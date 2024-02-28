@@ -14,6 +14,9 @@ def index(request):
         form = ProductForm()
     return render(request, "product_data_form/index.html", {"form": form})
 
+def save_price(request):
+    pass
+
 def search(request):
     if request.method == "GET":
         search_query = request.GET.get("search-query")
