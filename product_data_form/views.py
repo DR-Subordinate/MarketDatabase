@@ -15,7 +15,23 @@ def index(request):
     return render(request, "product_data_form/index.html", {"form": form})
 
 def save_price(request):
-    pass
+    if request.method == "POST":
+        if 'price' in request.POST:
+            pk = request.POST.get('primary_key')
+            product = Product.objects.get(pk=pk)
+            product.price = request.POST['price']
+            product.save()
+            return redirect("product_data_form:price")
+        elif 'winning_bid' in request.POST:
+            pk = request.POST.get('primary_key')
+            product = Product.objects.get(pk=pk)
+            product.winning_bid = request.POST['winning_bid']
+            product.save()
+            return redirect("product_data_form:price")
+    else:
+        form = ProductForm()
+        products = Product.objects.filter(winning_bid="")
+    return render(request, "product_data_form/price.html", {"products": products, "form": form})
 
 def search(request):
     if request.method == "GET":
