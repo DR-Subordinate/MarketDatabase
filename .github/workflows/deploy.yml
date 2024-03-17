@@ -1,0 +1,51 @@
+name: Production Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.5.3
+
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME_PROD }}
+          password: ${{ secrets.FTP_PASSWORD_PROD }}
+          server-dir: ./
+          exclude: |
+            **/.**/**
+            .env
+            .gitignore
+
+      - name: SSH Remote Commands
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script: |
+            cd /home/brandacross/across-shop.com/public_html/marketdb.across-shop.com
+
+            cat << EOF > .env
+            ENVIRONMENT=${{ secrets.ENVIRONMENT }}
+            SECRET_KEY=${{ secrets.SECRET_KEY }}
+            EOF
+
+            cat << EOF > index.cgi
+            from wsgiref.handlers import CGIHandler
+            from django.core.wsgi import get_wsgi_application
+
+            application = get_wsgi_application()
+            CGIHandler().run(application)
+            EOF
+
+            chmod 755 index.cgi
