@@ -71,16 +71,12 @@ jobs:
             import sys
 
             import dotenv
-            import pymysql
 
             # pipenv のパスを追加
             sys.path.insert(0, "$(pipenv --venv)/bin")
 
             # .env ファイルから環境変数を読み込む
             dotenv.load_dotenv()
-
-            # pymysql で MySQL を使えるようにする
-            pymysql.install_as_MySQLdb()
 
             from wsgiref.handlers import CGIHandler
             from django.core.wsgi import get_wsgi_application
