@@ -7,8 +7,3 @@ class ProductForm(ModelForm):
         fields = ["number", "brand_name", "name",
                   "model_number", "serial_number", "material_color",
                   "condition", "detail", "price", "winning_bid"]
-        widgets = {
-            "date": DateInput(attrs={"type":"date"})
-        }
-
-
