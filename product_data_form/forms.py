@@ -1,4 +1,4 @@
-from django.forms import ModelForm, DateInput, TextInput, Textarea
+from django.forms import ModelForm, DateInput, TextInput, Textarea, Select
 from .models import Product, Market
 
 class MarketForm(ModelForm):
@@ -13,10 +13,11 @@ class MarketForm(ModelForm):
 class ProductForm(ModelForm):
     class Meta:
         model = Product
-        fields = ["number", "brand_name", "name",
+        fields = ["market", "number", "brand_name", "name",
                   "model_number", "serial_number", "material_color",
                   "condition", "detail", "price", "winning_bid"]
         widgets = {
+            "market": Select(attrs={"class":"border border-black"}),
             "number": TextInput(attrs={"class":"border border-black"}),
             "brand_name": TextInput(attrs={"class":"border border-black"}),
             "name": TextInput(attrs={"class":"border border-black"}),
