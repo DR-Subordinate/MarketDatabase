@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.db.models import Q
 
 from .forms import ProductForm, MarketForm
-from .models import Product
+from .models import Product, Market
 
 def index(request):
     if request.method == "POST":
@@ -19,7 +19,9 @@ def index(request):
     else:
         product_form = ProductForm()
         market_form = MarketForm()
-    context = {"product_form": product_form, "market_form": market_form}
+        markets = Market.objects.all()
+        products_without_market = Product.objects.filter(market__isnull=True)
+    context = {"product_form": product_form, "market_form": market_form, "markets": markets, "products_without_market": products_without_market}
     return render(request, "product_data_form/index.html", context)
 
 def save_price(request):
