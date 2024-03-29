@@ -51,7 +51,6 @@
             <th class="p-2 border border-black">状態</th>
             <th class="p-2 border border-black">詳細・備考</th>
             <th class="p-2 border border-black">値段</th>
-            <th class="p-2 border border-black">落札価格</th>
           </tr>
         </thead>
         <tbody>
@@ -67,7 +66,6 @@
                 <td class="p-2 border border-black">{{ product.condition}}</td>
                 <td class="p-2 border border-black">{{ product.detail}}</td>
                 <td class="p-2 border border-black">{{ product.price}}</td>
-                <td class="p-2 border border-black">{{ product.winning_bid}}</td>
               </tr>
             {% endif %}
           {% endfor %}
@@ -89,7 +87,6 @@
           <th class="p-2 border border-black">状態</th>
           <th class="p-2 border border-black">詳細・備考</th>
           <th class="p-2 border border-black">値段</th>
-          <th class="p-2 border border-black">落札価格</th>
         </tr>
       </thead>
       <tbody>
@@ -105,7 +102,6 @@
               <td class="p-2 border border-black">{{ product.condition}}</td>
               <td class="p-2 border border-black">{{ product.detail}}</td>
               <td class="p-2 border border-black">{{ product.price}}</td>
-              <td class="p-2 border border-black">{{ product.winning_bid}}</td>
             </tr>
           {% endif %}
         {% endfor %}
