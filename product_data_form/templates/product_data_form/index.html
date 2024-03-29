@@ -21,6 +21,7 @@
         {% csrf_token %}
         {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
         <fieldset>
+          市場: {{ product_form.market.errors }} {{ product_form.market }}<br>
           番号: {{ product_form.number.errors }} {{ product_form.number }}<br>
           ブランド名: {{ product_form.brand_name.errors }} {{ product_form.brand_name }}<br>
           商品名: {{ product_form.name.errors }} {{ product_form.name }}<br>
