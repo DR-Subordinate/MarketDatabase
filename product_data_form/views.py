@@ -6,10 +6,16 @@ from .models import Product
 
 def index(request):
     if request.method == "POST":
-        form = ProductForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("product_data_form:index")
+        if "save_market" in request.POST:
+            market_form = MarketForm(request.POST)
+            if market_form.is_valid():
+                market_form.save()
+                return redirect("product_data_form:index")
+        elif "save_product" in request.POST:
+            product_form = ProductForm(request.POST)
+            if product_form.is_valid():
+                product_form.save()
+                return redirect("product_data_form:index")
     else:
         product_form = ProductForm()
         market_form = MarketForm()
