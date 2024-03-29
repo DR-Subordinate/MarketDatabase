@@ -6,7 +6,8 @@ class MarketForm(ModelForm):
         model = Market
         fields = ["date", "name"]
         widgets = {
-            "date": DateInput(attrs={"type":"date"})
+            "date": DateInput(attrs={"type":"date", "class":"border border-black"}),
+            "name": TextInput(attrs={"class":"border border-black"})
         }
 
 class ProductForm(ModelForm):
