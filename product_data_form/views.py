@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
 
-from .forms import ProductForm
+from .forms import ProductForm, MarketForm
 from .models import Product
 
 def index(request):
@@ -11,8 +11,9 @@ def index(request):
             form.save()
             return redirect("product_data_form:index")
     else:
-        form = ProductForm()
-    return render(request, "product_data_form/index.html", {"form": form})
+        product_form = ProductForm()
+        market_form = MarketForm()
+    return render(request, "product_data_form/index.html", {"product_form": product_form, "market_form": market_form})
 
 def save_price(request):
     if request.method == "POST":
