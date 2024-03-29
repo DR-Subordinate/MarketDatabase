@@ -1,5 +1,13 @@
 from django.forms import ModelForm, DateInput
-from .models import Product
+from .models import Product, Market
+
+class MarketForm(ModelForm):
+    class Meta:
+        model = Market
+        fields = ["date", "name"]
+        widgets = {
+            "date": DateInput(attrs={"type":"date"})
+        }
 
 class ProductForm(ModelForm):
     class Meta:
