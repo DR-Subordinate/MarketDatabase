@@ -5,17 +5,17 @@
     {% csrf_token %}
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
     <fieldset>
-      日付: {{ form.date.errors }} {{ form.date }}<br>
-      市場名: {{ form.market_name.errors }} {{ form.market_name }}<br>
-      番号: {{ form.number.errors }} {{ form.number }}<br>
-      ブランド名: {{ form.brand_name.errors }} {{ form.brand_name }}<br>
-      商品名: {{ form.name.errors }} {{ form.name }}<br>
-      型番: {{ form.model_number.errors }} {{ form.model_number }}<br>
-      製造番号: {{ form.serial_number.errors }} {{ form.serial_number }}<br>
-      素材・カラー: {{ form.material_color.errors }} {{ form.material_color }}<br>
-      状態: {{ form.condition.errors }} {{ form.condition }}<br>
-      詳細・備考: {{ form.detail.errors }} {{ form.detail }}<br>
-      {{ form.non_field_errors }}
+      日付: {{ market_form.date.errors }} {{ market_form.date }}<br>
+      市場名: {{ market_form.name.errors }} {{ market_form.name }}<br>
+      番号: {{ product_form.number.errors }} {{ product_form.number }}<br>
+      ブランド名: {{ product_form.brand_name.errors }} {{ product_form.brand_name }}<br>
+      商品名: {{ product_form.name.errors }} {{ product_form.name }}<br>
+      型番: {{ product_form.model_number.errors }} {{ product_form.model_number }}<br>
+      製造番号: {{ product_form.serial_number.errors }} {{ product_form.serial_number }}<br>
+      素材・カラー: {{ product_form.material_color.errors }} {{ product_form.material_color }}<br>
+      状態: {{ product_form.condition.errors }} {{ product_form.condition }}<br>
+      詳細・備考: {{ product_form.detail.errors }} {{ product_form.detail }}<br>
+      {{ product_form.non_field_errors }}
       <input type="submit" value="保存" class="border border-black">
     </fieldset>
     </form>
