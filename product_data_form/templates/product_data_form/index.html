@@ -56,18 +56,20 @@
         </thead>
         <tbody>
           {% for product in market.product_set.all %}
-            <tr>
-              <td class="p-2 border border-black">{{ product.number}}</td>
-              <td class="p-2 border border-black">{{ product.brand_name}}</td>
-              <td class="p-2 border border-black">{{ product.name}}</td>
-              <td class="p-2 border border-black">{{ product.model_number}}</td>
-              <td class="p-2 border border-black">{{ product.serial_number}}</td>
-              <td class="p-2 border border-black">{{ product.material_color}}</td>
-              <td class="p-2 border border-black">{{ product.condition}}</td>
-              <td class="p-2 border border-black">{{ product.detail}}</td>
-              <td class="p-2 border border-black">{{ product.price}}</td>
-              <td class="p-2 border border-black">{{ product.winning_bid}}</td>
-            </tr>
+            {% if product.price and not product.winning_bid %}
+              <tr>
+                <td class="p-2 border border-black">{{ product.number}}</td>
+                <td class="p-2 border border-black">{{ product.brand_name}}</td>
+                <td class="p-2 border border-black">{{ product.name}}</td>
+                <td class="p-2 border border-black">{{ product.model_number}}</td>
+                <td class="p-2 border border-black">{{ product.serial_number}}</td>
+                <td class="p-2 border border-black">{{ product.material_color}}</td>
+                <td class="p-2 border border-black">{{ product.condition}}</td>
+                <td class="p-2 border border-black">{{ product.detail}}</td>
+                <td class="p-2 border border-black">{{ product.price}}</td>
+                <td class="p-2 border border-black">{{ product.winning_bid}}</td>
+              </tr>
+            {% endif %}
           {% endfor %}
         </tbody>
       </table>
@@ -92,18 +94,20 @@
       </thead>
       <tbody>
         {% for product in products_without_market %}
-          <tr>
-            <td class="p-2 border border-black">{{ product.number}}</td>
-            <td class="p-2 border border-black">{{ product.brand_name}}</td>
-            <td class="p-2 border border-black">{{ product.name}}</td>
-            <td class="p-2 border border-black">{{ product.model_number}}</td>
-            <td class="p-2 border border-black">{{ product.serial_number}}</td>
-            <td class="p-2 border border-black">{{ product.material_color}}</td>
-            <td class="p-2 border border-black">{{ product.condition}}</td>
-            <td class="p-2 border border-black">{{ product.detail}}</td>
-            <td class="p-2 border border-black">{{ product.price}}</td>
-            <td class="p-2 border border-black">{{ product.winning_bid}}</td>
-          </tr>
+          {% if product.price and not product.winning_bid %}
+            <tr>
+              <td class="p-2 border border-black">{{ product.number}}</td>
+              <td class="p-2 border border-black">{{ product.brand_name}}</td>
+              <td class="p-2 border border-black">{{ product.name}}</td>
+              <td class="p-2 border border-black">{{ product.model_number}}</td>
+              <td class="p-2 border border-black">{{ product.serial_number}}</td>
+              <td class="p-2 border border-black">{{ product.material_color}}</td>
+              <td class="p-2 border border-black">{{ product.condition}}</td>
+              <td class="p-2 border border-black">{{ product.detail}}</td>
+              <td class="p-2 border border-black">{{ product.price}}</td>
+              <td class="p-2 border border-black">{{ product.winning_bid}}</td>
+            </tr>
+          {% endif %}
         {% endfor %}
       </tbody>
     </table>
