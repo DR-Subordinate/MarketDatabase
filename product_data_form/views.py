@@ -16,6 +16,9 @@ def index(request):
     context = {"market_form": market_form, "markets": markets}
     return render(request, "product_data_form/index.html", context)
 
+def save_product(request, market_name, market_date):
+    pass
+
 def save_price(request):
     if request.method == "POST":
         if 'price' in request.POST:
