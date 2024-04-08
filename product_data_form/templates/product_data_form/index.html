@@ -74,39 +74,4 @@
       </table>
     {% endfor %}
   </section>
-  <section>
-    <h1>市場が登録されていない商品</h1>
-    <table class="mx-auto border border-black">
-      <thead>
-        <tr class="bg-gray-300">
-          <th class="p-2 border border-black">番号</th>
-          <th class="p-2 border border-black">ブランド名</th>
-          <th class="p-2 border border-black">商品名</th>
-          <th class="p-2 border border-black">型番</th>
-          <th class="p-2 border border-black">製造番号</th>
-          <th class="p-2 border border-black">素材・カラー</th>
-          <th class="p-2 border border-black">状態</th>
-          <th class="p-2 border border-black">詳細・備考</th>
-          <th class="p-2 border border-black">値段</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for product in products_without_market %}
-          {% if product.price and not product.winning_bid %}
-            <tr>
-              <td class="p-2 border border-black">{{ product.number}}</td>
-              <td class="p-2 border border-black">{{ product.brand_name}}</td>
-              <td class="p-2 border border-black">{{ product.name}}</td>
-              <td class="p-2 border border-black">{{ product.model_number}}</td>
-              <td class="p-2 border border-black">{{ product.serial_number}}</td>
-              <td class="p-2 border border-black">{{ product.material_color}}</td>
-              <td class="p-2 border border-black">{{ product.condition}}</td>
-              <td class="p-2 border border-black">{{ product.detail}}</td>
-              <td class="p-2 border border-black">{{ product.price}}</td>
-            </tr>
-          {% endif %}
-        {% endfor %}
-      </tbody>
-    </table>
-  </section>
 {% endblock %}
