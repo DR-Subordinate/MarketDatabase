@@ -15,4 +15,10 @@
       </form>
     </section>
   </div>
+
+  {% for market in markets %}
+    <a href="{% url 'product_data_form:product' market_name=market.name market_date=market.date %}">{{ market.name }} {{ market.date }}</a><br>
+  {% endfor %}
+
+
 {% endblock %}
