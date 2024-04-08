@@ -6,21 +6,13 @@ from .models import Product, Market
 
 def index(request):
     if request.method == "POST":
-        if "save_market" in request.POST:
-            market_form = MarketForm(request.POST)
-            if market_form.is_valid():
-                market_form.save()
-                return redirect("product_data_form:index")
-        elif "save_product" in request.POST:
-            product_form = ProductForm(request.POST)
-            if product_form.is_valid():
-                product_form.save()
-                return redirect("product_data_form:index")
+        market_form = MarketForm(request.POST)
+        if market_form.is_valid():
+            market_form.save()
+            return redirect("product_data_form:index")
     else:
-        product_form = ProductForm()
         market_form = MarketForm()
-        markets = Market.objects.all()
-    context = {"product_form": product_form, "market_form": market_form, "markets": markets}
+    context = {"market_form": market_form}
     return render(request, "product_data_form/index.html", context)
 
 def save_price(request):
