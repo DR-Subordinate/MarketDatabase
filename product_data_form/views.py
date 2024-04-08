@@ -12,7 +12,8 @@ def index(request):
             return redirect("product_data_form:index")
     else:
         market_form = MarketForm()
-    context = {"market_form": market_form}
+        markets = Market.objects.all()
+    context = {"market_form": market_form, "markets": markets}
     return render(request, "product_data_form/index.html", context)
 
 def save_price(request):
