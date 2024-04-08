@@ -20,8 +20,7 @@ def index(request):
         product_form = ProductForm()
         market_form = MarketForm()
         markets = Market.objects.all()
-        products_without_market = Product.objects.filter(market__isnull=True)
-    context = {"product_form": product_form, "market_form": market_form, "markets": markets, "products_without_market": products_without_market}
+    context = {"product_form": product_form, "market_form": market_form, "markets": markets}
     return render(request, "product_data_form/index.html", context)
 
 def save_price(request):
