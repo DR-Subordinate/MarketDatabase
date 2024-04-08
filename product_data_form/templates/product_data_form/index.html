@@ -14,27 +14,6 @@
         </fieldset>
       </form>
     </section>
-
-    <section class="border border-black">
-      <h1 class="text-3xl text-green-500">商品</h1>
-      <form method="post">
-        {% csrf_token %}
-        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-        <fieldset>
-          市場: {{ product_form.market.errors }} {{ product_form.market }}<br>
-          番号: {{ product_form.number.errors }} {{ product_form.number }}<br>
-          ブランド名: {{ product_form.brand_name.errors }} {{ product_form.brand_name }}<br>
-          商品名: {{ product_form.name.errors }} {{ product_form.name }}<br>
-          型番: {{ product_form.model_number.errors }} {{ product_form.model_number }}<br>
-          製造番号: {{ product_form.serial_number.errors }} {{ product_form.serial_number }}<br>
-          素材・カラー: {{ product_form.material_color.errors }} {{ product_form.material_color }}<br>
-          状態: {{ product_form.condition.errors }} {{ product_form.condition }}<br>
-          詳細・備考: {{ product_form.detail.errors }} {{ product_form.detail }}<br>
-          {{ product_form.non_field_errors }}
-          <input type="submit" name="save_product" value="商品を保存" class="border border-black">
-        </fieldset>
-      </form>
-    </section>
   </div>
 
   <section>
