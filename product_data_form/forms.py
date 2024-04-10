@@ -18,14 +18,14 @@ class ProductForm(ModelForm):
                   "condition", "detail", "price", "winning_bid"]
         widgets = {
             "market": Select(attrs={"class":"border border-black"}),
-            "number": TextInput(attrs={"class":"border border-black"}),
-            "brand_name": TextInput(attrs={"class":"border border-black"}),
-            "name": TextInput(attrs={"class":"border border-black"}),
-            "model_number": TextInput(attrs={"class":"border border-black"}),
-            "serial_number": TextInput(attrs={"class":"border border-black"}),
+            "number": TextInput(attrs={"class":"border border-black ml-16"}),
+            "brand_name": TextInput(attrs={"class":"border border-black ml-4"}),
+            "name": TextInput(attrs={"class":"border border-black ml-12"}),
+            "model_number": TextInput(attrs={"class":"border border-black ml-16"}),
+            "serial_number": TextInput(attrs={"class":"border border-black ml-8"}),
             "material_color": TextInput(attrs={"class":"border border-black"}),
-            "condition": TextInput(attrs={"class":"border border-black"}),
-            "detail": Textarea(attrs={"class":"border border-black"}),
+            "condition": TextInput(attrs={"class":"border border-black ml-16"}),
+            "detail": Textarea(attrs={"cols":"35", "rows":"5", "class":"border border-black align-middle ml-4"}),
             "price": TextInput(attrs={"class":"border border-black"}),
             "winning_bid": TextInput(attrs={"class":"border border-black"})
         }
