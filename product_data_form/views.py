@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 
 from .forms import ProductForm, MarketForm
@@ -17,7 +17,18 @@ def index(request):
     return render(request, "product_data_form/index.html", context)
 
 def save_product(request, market_name, market_date):
-    pass
+    market = get_object_or_404(Market, name=market_name, date=market_date)
+    if request.method == "POST":
+        product_form = ProductForm(request.POST)
+        if product_form.is_valid():
+            product = product_form.save(commit=False)
+            product.market = market
+            product.save()
+            return redirect("product_data_form:product", market_name=market_name, market_date=market_date)
+    else:
+        product_form = ProductForm()
+    context = {"product_form": product_form, "market": market}
+    return render(request, "product_data_form/product.html", context)
 
 def save_price(request):
     if request.method == "POST":
