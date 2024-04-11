@@ -1,0 +1,88 @@
+# テスト環境へデプロイする
+name: Testing Deploy
+
+on:
+  # dev ブランチへプッシュされたとき
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.5.3
+
+      # FTP 経由でファイルをサーバへ転送する
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME_TEST }}
+          password: ${{ secrets.FTP_PASSWORD_TEST }}
+          server-dir: ./
+          exclude: |
+            **/.**/**
+            .editorconfig
+            .gitignore
+
+      # SSH 経由でコマンドを実行する
+      - name: SSH Remote Commands
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script: |
+            cd /home/brandacross/across-shop.com/public_html/test-marketdb.across-shop.com
+
+            # .env を作成
+            cat << EOF > .env
+            DJANGO_SETTINGS_MODULE=marketdatabase.settings_test
+            SECRET_KEY=${{ secrets.SECRET_KEY }}
+            DATABASE_HOST=${{ secrets.DATABASE_HOST }}
+            DATABASE_PORT=${{ secrets.DATABASE_PORT }}
+            DATABASE_NAME=${{ secrets.DATABASE_NAME_TEST }}
+            DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME_TEST }}
+            DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD_TEST }}
+            DATABASE_NAME_UNITTEST=${{ secrets.DATABASE_NAME_UNITTEST }}
+            EOF
+
+            # 仮想環境を作成
+            pipenv --python 3
+
+            # Pipfile.lock からパッケージをインストール
+            pipenv sync
+
+            # DB マイグレーション
+            pipenv run python manage.py migrate
+
+            # static ファイルの収集
+            pipenv run python manage.py collectstatic --noinput
+
+            # index.cgi を作成
+            cat << EOF > index.cgi
+            #!$(pipenv --venv)/bin/python
+            import sys
+
+            import dotenv
+
+            # pipenv のパスを追加
+            sys.path.insert(0, "$(pipenv --venv)/bin")
+
+            # .env ファイルから環境変数を読み込む
+            dotenv.load_dotenv()
+
+            from wsgiref.handlers import CGIHandler
+            from django.core.wsgi import get_wsgi_application
+
+            # アプリケーションを起動
+            application = get_wsgi_application()
+            CGIHandler().run(application)
+            EOF
+
+            # index.cgi のパーミッションを変更
+            chmod 755 index.cgi
