@@ -70,3 +70,6 @@ def search(request):
         else:
             return render(request, "product_data_form/search.html")
     return render(request, "product_data_form/search.html", {"products": products})
+
+def edit(request):
+    pass
