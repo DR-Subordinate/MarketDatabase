@@ -12,7 +12,7 @@ def index(request):
             return redirect("product_data_form:index")
     else:
         market_form = MarketForm()
-        markets = Market.objects.all()
+        markets = Market.objects.all().order_by("-pk")
     context = {"market_form": market_form, "markets": markets}
     return render(request, "product_data_form/index.html", context)
 
