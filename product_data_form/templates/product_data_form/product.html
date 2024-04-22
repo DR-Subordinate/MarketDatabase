@@ -3,7 +3,7 @@
 {% block content %}
   <section class="flex flex-col items-center justify-center my-8">
     <h1 class="text-5xl text-blue-500 mb-8">商品</h1>
-    <form method="post">
+    <form method="post" id="product_form">
       {% csrf_token %}
       {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
       <fieldset class="flex flex-col border">
@@ -95,4 +95,13 @@
       </tbody>
     </table>
   </section>
+
+  <script>
+    const productForm = document.getElementById("product_form");
+    productForm.addEventListener("keydown", e => {
+      if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+        e.preventDefault();
+      }
+    });
+  </script>
 {% endblock %}
