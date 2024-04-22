@@ -72,4 +72,22 @@ def search(request):
     return render(request, "product_data_form/search.html", {"products": products})
 
 def edit(request):
-    pass
+    if request.method == "POST":
+        pk = request.POST.get('primary_key')
+        product = Product.objects.get(pk=pk)
+        product.number = request.POST['number']
+        product.brand_name = request.POST['brand_name']
+        product.name = request.POST['name']
+        product.model_number = request.POST['model_number']
+        product.serial_number = request.POST['serial_number']
+        product.material_color = request.POST['material_color']
+        product.condition = request.POST['condition']
+        product.detail = request.POST['detail']
+        product.price = request.POST['price']
+        product.winning_bid = request.POST['winning_bid']
+        product.save()
+        return redirect("product_data_form:edit")
+    else:
+        markets = Market.objects.all()
+    context = {"markets": markets}
+    return render(request, "product_data_form/edit.html", context)
