@@ -32,22 +32,18 @@ def save_product(request, market_name, market_date):
 
 def save_price(request):
     if request.method == "POST":
+        pk = request.POST.get('primary_key')
+        product = Product.objects.get(pk=pk)
         if 'price' in request.POST:
-            pk = request.POST.get('primary_key')
-            product = Product.objects.get(pk=pk)
             product.price = request.POST['price']
-            product.save()
-            return redirect("product_data_form:price")
         elif 'winning_bid' in request.POST:
-            pk = request.POST.get('primary_key')
-            product = Product.objects.get(pk=pk)
             product.winning_bid = request.POST['winning_bid']
-            product.save()
-            return redirect("product_data_form:price")
+        product.save()
+        return redirect("product_data_form:price")
     else:
-        form = ProductForm()
-        products = Product.objects.filter(winning_bid="")
-    return render(request, "product_data_form/price.html", {"products": products, "form": form})
+        markets = Market.objects.all()
+    context = {"markets": markets}
+    return render(request, "product_data_form/price.html", context)
 
 def search(request):
     if request.method == "GET":
