@@ -12,8 +12,8 @@
     <table class="mx-auto border border-black">
       <thead>
         <tr class="bg-gray-300">
-          <th class="p-2 border border-black">日付</th>
           <th class="p-2 border border-black">市場名</th>
+          <th class="p-2 border border-black">日付</th>
           <th class="p-2 border border-black">番号</th>
           <th class="p-2 border border-black">ブランド名</th>
           <th class="p-2 border border-black">商品名</th>
@@ -29,8 +29,8 @@
       <tbody>
         {% for product in products %}
           <tr>
-            <td class="p-2 border border-black">{{ product.date }}</td>
-            <td class="p-2 border border-black">{{ product.market_name }}</td>
+            <td class="p-2 border border-black">{{ product.market.name }}</td>
+            <td class="p-2 border border-black">{{ product.market.date }}</td>
             <td class="p-2 border border-black">{{ product.number}}</td>
             <td class="p-2 border border-black">{{ product.brand_name}}</td>
             <td class="p-2 border border-black">{{ product.name}}</td>
