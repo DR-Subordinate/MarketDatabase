@@ -50,8 +50,8 @@ def search(request):
         search_query = request.GET.get("search-query")
         if search_query:
             products = Product.objects.filter(
-                Q(date__icontains=search_query) |
-                Q(market_name__icontains=search_query) |
+                Q(market__name__icontains=search_query) |
+                Q(market__date__icontains=search_query) |
                 Q(number__icontains=search_query) |
                 Q(brand_name__icontains=search_query) |
                 Q(name__icontains=search_query) |
