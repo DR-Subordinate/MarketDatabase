@@ -47,7 +47,7 @@
                 <input type="text" name="condition" form="edit_form_{{ product.pk }}" value="{{ product.condition }}" class="border border-black">
               </td>
               <td class="p-2 border border-black" data-product="detail">
-                <input type="text" name="detail" form="edit_form_{{ product.pk }}" value="{{ product.detail }}" class="border border-black">
+                <textarea name="detail" cols="35" rows="5" class="border border-black" form="edit_form_{{ product.pk }}">{{ product.detail }}</textarea>
               </td>
               <td class="p-2 border border-black">
                 <input type="text" name="price" form="edit_form_{{ product.pk }}" value="{{ product.price }}" class="border border-black">
@@ -75,22 +75,22 @@
 
       for (const detailDatum of detailData) {
         detailDataTextContents.push(detailDatum.textContent);
-        const inputElement = detailDatum.querySelector("input");
-        inputElement.style.display = "none";
+        const textArea = detailDatum.querySelector("textarea");
+        textArea.style.display = "none";
       }
 
       detailHeader.addEventListener("click", () => {
         if (detailHeader.textContent === "↓") {
           detailHeader.textContent = "詳細・備考";
           detailData.forEach((detailDatum, index) => {
-            const inputElement = detailDatum.querySelector("input");
-            inputElement.style.display = "";
+            const textArea = detailDatum.querySelector("textarea");
+            textArea.style.display = "";
           });
         } else {
           detailHeader.textContent = "↓";
           detailData.forEach(detailDatum => {
-            const inputElement = detailDatum.querySelector("input");
-            inputElement.style.display = "none";
+            const textArea = detailDatum.querySelector("textarea");
+            textArea.style.display = "none";
           });
         }
       });
