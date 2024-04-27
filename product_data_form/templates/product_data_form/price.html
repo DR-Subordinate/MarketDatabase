@@ -22,34 +22,36 @@
         <tbody>
           {% for product in market.product_set.all %}
             {% if not product.winning_bid %}
-              <td class="p-2 border border-black">{{ product.number }}</td>
-              <td class="p-2 border border-black">{{ product.brand_name }}</td>
-              <td class="p-2 border border-black">{{ product.name }}</td>
-              <td class="p-2 border border-black">{{ product.model_number }}</td>
-              <td class="p-2 border border-black">{{ product.serial_number }}</td>
-              <td class="p-2 border border-black">{{ product.material_color }}</td>
-              <td class="p-2 border border-black">{{ product.condition }}</td>
-              <td class="p-2 border border-black">{{ product.detail }}</td>
-              <td class="p-2 border border-black">
-                {% if product.price %}
-                  {{ product.price }}
-                {% else %}
+              <tr>
+                <td class="p-2 border border-black">{{ product.number }}</td>
+                <td class="p-2 border border-black">{{ product.brand_name }}</td>
+                <td class="p-2 border border-black">{{ product.name }}</td>
+                <td class="p-2 border border-black">{{ product.model_number }}</td>
+                <td class="p-2 border border-black">{{ product.serial_number }}</td>
+                <td class="p-2 border border-black">{{ product.material_color }}</td>
+                <td class="p-2 border border-black">{{ product.condition }}</td>
+                <td class="p-2 border border-black">{{ product.detail }}</td>
+                <td class="p-2 border border-black">
+                  {% if product.price %}
+                    {{ product.price }}
+                  {% else %}
+                    <form method="post">
+                      {% csrf_token %}
+                      <input type="text" name="price" class="border border-black">
+                      <input type="hidden" name="primary_key" value="{{product.pk}}">
+                      <input type="submit" value="保存" class="border border-black">
+                    </form>
+                  {% endif %}
+                </td>
+                <td class="p-2 border border-black">
                   <form method="post">
                     {% csrf_token %}
-                    <input type="text" name="price" class="border border-black">
+                    <input type="text" name="winning_bid" class="border border-black">
                     <input type="hidden" name="primary_key" value="{{product.pk}}">
                     <input type="submit" value="保存" class="border border-black">
                   </form>
-                {% endif %}
-              </td>
-              <td class="p-2 border border-black">
-                <form method="post">
-                  {% csrf_token %}
-                  <input type="text" name="winning_bid" class="border border-black">
-                  <input type="hidden" name="primary_key" value="{{product.pk}}">
-                  <input type="submit" value="保存" class="border border-black">
-                </form>
-              </td>
+                </td>
+              </tr>
             {% endif %}
           {% endfor %}
         </tbody>
