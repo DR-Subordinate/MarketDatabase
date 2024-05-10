@@ -14,6 +14,7 @@
         <tr class="bg-gray-300">
           <th class="p-2 border border-black">市場名</th>
           <th class="p-2 border border-black">日付</th>
+          <th class="p-2 border border-black">画像</th>
           <th class="p-2 border border-black">番号</th>
           <th class="p-2 border border-black">ブランド名</th>
           <th class="p-2 border border-black">商品名</th>
@@ -31,6 +32,11 @@
           <tr>
             <td class="p-2 border border-black">{{ product.market.name }}</td>
             <td class="p-2 border border-black">{{ product.market.date }}</td>
+            <td class="p-2 border border-black">
+              {% if product.image %}
+                <img src="{{ product.image.url }}" alt="商品画像" width="100" height="100">
+              {% endif %}
+            </td>
             <td class="p-2 border border-black">{{ product.number}}</td>
             <td class="p-2 border border-black">{{ product.brand_name}}</td>
             <td class="p-2 border border-black">{{ product.name}}</td>
