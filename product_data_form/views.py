@@ -81,6 +81,10 @@ def edit(request):
         product.detail = request.POST['detail']
         product.price = request.POST['price']
         product.winning_bid = request.POST['winning_bid']
+
+        if 'image' in request.FILES:
+            product.image = request.FILES['image']
+
         product.save()
         return redirect("product_data_form:edit")
     else:
