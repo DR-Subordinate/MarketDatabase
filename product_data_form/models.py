@@ -10,6 +10,7 @@ class Market(models.Model):
 
 class Product(models.Model):
     market = models.ForeignKey(Market, on_delete=models.CASCADE, blank=True, null=True)
+    image = models.ImageField(upload_to='images/', null=True, blank=True)
     number = models.CharField(max_length=200, blank=True)
     brand_name = models.CharField(max_length=200, blank=True)
     name = models.CharField(max_length=200, blank=True)
