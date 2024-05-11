@@ -19,7 +19,7 @@ def index(request):
 def save_product(request, market_name, market_date):
     market = get_object_or_404(Market, name=market_name, date=market_date)
     if request.method == "POST":
-        product_form = ProductForm(request.POST)
+        product_form = ProductForm(request.POST, request.FILES)
         if product_form.is_valid():
             product = product_form.save(commit=False)
             product.market = market
