@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'product_data_form.apps.ProductDataFormConfig',
+    'star_buyers_auction.apps.StarBuyersAuctionConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
