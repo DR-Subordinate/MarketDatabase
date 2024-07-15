@@ -4,6 +4,9 @@ from django.db.models import Q
 from .forms import ProductForm, MarketForm
 from .models import Product, Market
 
+def register(request):
+    pass
+
 def index(request):
     if request.method == "POST":
         market_form = MarketForm(request.POST)
