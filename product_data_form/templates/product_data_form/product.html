@@ -1,111 +1,134 @@
 {% extends "product_data_form/base.html" %}
 
 {% block content %}
-  <section class="flex flex-col items-center justify-center my-8">
-    <h1 class="text-5xl text-blue-500 mb-8">商品</h1>
-    <form method="post" id="product_form" enctype="multipart/form-data">
-      {% csrf_token %}
-      {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-      <fieldset class="flex flex-col border">
-        <div class="p-1">
-          <label>
-            <span class="font-bold">画像</span>
-            {{ product_form.image.errors }} {{ product_form.image }}
-          </label>
-        </div>
-        <div class="p-1">
-          <label>
-            <span class="font-bold">番号</span>
-            {{ product_form.number.errors }} {{ product_form.number }}
-          </label>
-        </div>
-        <div class="p-1">
-          <label>
-            <span class="font-bold">ブランド名</span>
-            {{ product_form.brand_name.errors }} {{ product_form.brand_name }}
-          </label>
-        </div>
-        <div class="p-1">
-          <label>
-            <span class="font-bold">商品名</span>
-            {{ product_form.name.errors }} {{ product_form.name }}
-          </label>
-        </div>
-        <div class="p-1">
-          <label>
-            <span class="font-bold">型番</span>
-            {{ product_form.model_number.errors }} {{ product_form.model_number }}
-          </label>
-        </div>
-        <div class="p-1">
-          <label>
-            <span class="font-bold">製造番号</span>
-            {{ product_form.serial_number.errors }} {{ product_form.serial_number }}
-          </label>
-        </div>
-        <div class="p-1">
-          <label>
-            <span class="font-bold">素材・カラー</span>
-            {{ product_form.material_color.errors }} {{ product_form.material_color }}
-          </label>
-        </div>
-        <div class="p-1">
-          <label>
-            <span class="font-bold">状態</span>
-            {{ product_form.condition.errors }} {{ product_form.condition }}
-          </label>
-        </div>
-        <div class="p-1">
-          <label>
-            <span class="font-bold">詳細・備考</span>
-            {{ product_form.detail.errors }} {{ product_form.detail }}
-          </label>
-        </div>
-          <input type="submit" name="save_product" value="商品を保存" class="cursor-pointer text-white bg-blue-600 rounded p-1 mt-2 mx-auto">
-      </fieldset>
-    </form>
-  </section>
-
   <section>
-    <h1 class="text-3xl text-center font-bold mb-2">{{ market.name}} {{ market.date}}</h1>
-    <table class="mb-8 mx-auto border border-black">
-      <thead>
-        <tr class="bg-gray-300">
-          <th class="p-2 border border-black">画像</th>
-          <th class="p-2 border border-black">番号</th>
-          <th class="p-2 border border-black">ブランド名</th>
-          <th class="p-2 border border-black">商品名</th>
-          <th class="p-2 border border-black">型番</th>
-          <th class="p-2 border border-black">製造番号</th>
-          <th class="p-2 border border-black">素材・カラー</th>
-          <th class="p-2 border border-black">状態</th>
-          <th class="p-2 border border-black cursor-pointer" id="detail_header">↓</th>
-          <th class="p-2 border border-black">値段</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for product in market.product_set.all %}
-          {% if not product.winning_bid %}
+    <h1 class="text-3xl text-center font-bold mb-2 cursor-pointer" id="market_name_header">
+      {{ market.name}} {{ market.date}} <span class="text-blue-500">+</span>
+    </h1>
+    <form method="post" id="product_form" enctype="multipart/form-data" class="hidden">
+      {% csrf_token %}
+      {{ new_formset.management_form }}
+      <h2 class="text-3xl text-center font-bold mb-2 cursor-pointer" id="save_product_header">
+        商品を登録
+        <span class="text-blue-500">+</span>
+      </h2>
+      <table class="table-fixed w-full mb-8 mx-auto border border-black hidden" id="save_product_table">
+        <thead>
+          <tr class="bg-gray-300">
+            <th class="border border-black">画像</th>
+            <th class="border border-black">番号</th>
+            <th class="border border-black">ブランド名</th>
+            <th class="border border-black">商品名</th>
+            <th class="border border-black">型番</th>
+            <th class="border border-black">製造番号</th>
+            <th class="border border-black">素材・カラー</th>
+            <th class="border border-black">状態</th>
+            <th class="border border-black">詳細・備考</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for form in new_formset %}
             <tr>
-              <td class="p-2 border border-black">
-                {% if product.image %}
-                  <img src="{{ product.image.url }}" alt="商品画像" width="100" height="100">
-                {% endif %}
+              {{ form.id }}
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.image.errors }} {{ form.image }}
               </td>
-              <td class="p-2 border border-black">{{ product.number }}</td>
-              <td class="p-2 border border-black">{{ product.brand_name }}</td>
-              <td class="p-2 border border-black">{{ product.name }}</td>
-              <td class="p-2 border border-black">{{ product.model_number }}</td>
-              <td class="p-2 border border-black">{{ product.serial_number }}</td>
-              <td class="p-2 border border-black">{{ product.material_color }}</td>
-              <td class="p-2 border border-black">{{ product.condition }}</td>
-              <td class="p-2 border border-black whitespace-pre-wrap" data-product="detail">{{ product.detail }}</td>
-              <td class="p-2 border border-black">{{ product.price }}</td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.number.errors }} {{ form.number }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.brand_name.errors }} {{ form.brand_name }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.name.errors }} {{ form.name }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.model_number.errors }} {{ form.model_number }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.serial_number.errors }} {{ form.serial_number }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.material_color.errors }} {{ form.material_color }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.condition.errors }} {{ form.condition }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.detail.errors }} {{ form.detail }}
+              </td>
             </tr>
-          {% endif %}
-        {% endfor %}
-      </tbody>
-    </table>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {{ edit_formset.management_form }}
+      <h2 class="text-3xl text-center font-bold mb-2 cursor-pointer" id="edit_product_header">
+        商品を編集
+        <span class="text-blue-500">+</span>
+      </h2>
+      <table class="table-fixed w-full mb-8 mx-auto border border-black hidden" id="edit_product_table">
+        <thead>
+          <tr class="bg-gray-300">
+            <th class="border border-black">画像</th>
+            <th class="border border-black">番号</th>
+            <th class="border border-black">ブランド名</th>
+            <th class="border border-black">商品名</th>
+            <th class="border border-black">型番</th>
+            <th class="border border-black">製造番号</th>
+            <th class="border border-black">素材・カラー</th>
+            <th class="border border-black">状態</th>
+            <th class="border border-black">詳細・備考</th>
+            <th class="border border-black">値段</th>
+            <th class="border border-black">落札価格</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for form in edit_formset %}
+            <tr>
+              {{ form.id }}
+              <td class="p-1 border border-black overflow-hidden">
+                {% if form.instance.image %}
+                  <img src="{{ form.instance.image.url }}" alt="商品画像" class="w-14 h-14">
+                {% endif %}
+                {{ form.image.errors }} {{ form.image }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.number.errors }} {{ form.number }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.brand_name.errors }} {{ form.brand_name }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.name.errors }} {{ form.name }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.model_number.errors }} {{ form.model_number }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.serial_number.errors }} {{ form.serial_number }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.material_color.errors }} {{ form.material_color }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.condition.errors }} {{ form.condition }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.detail.errors }} {{ form.detail }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.price.errors }} {{ form.price }}
+              </td>
+              <td class="p-1 border border-black overflow-hidden">
+                {{ form.winning_bid.errors }} {{ form.winning_bid }}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <input type="submit" name="save" value="保存" class="cursor-pointer text-white bg-blue-600 rounded p-1 fixed bottom-9 left-14">
+    </form>
   </section>
 
   <script>
@@ -116,26 +139,41 @@
       }
     });
 
-    const detailHeader = document.getElementById("detail_header");
-    const detailData = document.querySelectorAll("[data-product]");
-    const detailDataTextContents = [];
-
-    for (const detailDatum of detailData) {
-      detailDataTextContents.push(detailDatum.textContent);
-      detailDatum.textContent = "";
-    }
-
-    detailHeader.addEventListener("click", () => {
-      if (detailHeader.textContent === "↓") {
-        detailHeader.textContent = "詳細・備考";
-        detailData.forEach((detailDatum, index) => {
-          detailDatum.textContent = detailDataTextContents[index];
-        });
+    const marketNameHeader = document.getElementById("market_name_header");
+    const marketNameHeaderText = document.querySelector("#market_name_header > .text-blue-500");
+    marketNameHeader.addEventListener("click", () => {
+      if (marketNameHeaderText.textContent === "+") {
+        marketNameHeaderText.textContent = "−";
+        productForm.classList.toggle("hidden");
       } else {
-        detailHeader.textContent = "↓";
-        detailData.forEach(detailDatum => {
-          detailDatum.textContent = "";
-        });
+        marketNameHeaderText.textContent = "+";
+        productForm.classList.toggle("hidden");
+      }
+    });
+
+    const saveProductHeader = document.getElementById("save_product_header");
+    const saveProductHeaderText = document.querySelector("#save_product_header > .text-blue-500");
+    const saveProductTable = document.getElementById("save_product_table")
+    saveProductHeader.addEventListener("click", () => {
+      if (saveProductHeaderText.textContent === "+") {
+        saveProductHeaderText.textContent = "−";
+        saveProductTable.classList.toggle("hidden");
+      } else {
+        saveProductHeaderText.textContent = "+";
+        saveProductTable.classList.toggle("hidden");
+      }
+    });
+
+    const editProductHeader = document.getElementById("edit_product_header");
+    const editProductHeaderText = document.querySelector("#edit_product_header > .text-blue-500");
+    const editProductTable = document.getElementById("edit_product_table")
+    editProductHeader.addEventListener("click", () => {
+      if (editProductHeaderText.textContent === "+") {
+        editProductHeaderText.textContent = "−";
+        editProductTable.classList.toggle("hidden");
+      } else {
+        editProductHeaderText.textContent = "+";
+        editProductTable.classList.toggle("hidden");
       }
     });
   </script>
