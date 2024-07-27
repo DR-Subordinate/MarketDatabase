@@ -18,15 +18,15 @@ class ProductForm(ModelForm):
                   "condition", "detail", "price", "winning_bid"]
         widgets = {
             "market": Select(attrs={"class":"border border-black"}),
-            "image": FileInput(attrs={"class":"ml-16"}),
-            "number": TextInput(attrs={"class":"border border-black ml-16"}),
-            "brand_name": TextInput(attrs={"class":"border border-black ml-4"}),
-            "name": TextInput(attrs={"class":"border border-black ml-12"}),
-            "model_number": TextInput(attrs={"class":"border border-black ml-16"}),
-            "serial_number": TextInput(attrs={"class":"border border-black ml-8"}),
-            "material_color": TextInput(attrs={"class":"border border-black"}),
-            "condition": TextInput(attrs={"class":"border border-black ml-16"}),
-            "detail": Textarea(attrs={"cols":"35", "rows":"5", "class":"border border-black align-middle ml-4"}),
-            "price": TextInput(attrs={"class":"border border-black"}),
-            "winning_bid": TextInput(attrs={"class":"border border-black"})
+            "image": FileInput(attrs={"class":" text-xs"}),
+            "number": TextInput(attrs={"class":"border border-black text-xs"}),
+            "brand_name": TextInput(attrs={"class":"border border-black text-xs"}),
+            "name": TextInput(attrs={"class":"border border-black text-xs"}),
+            "model_number": TextInput(attrs={"class":"border border-black text-xs"}),
+            "serial_number": TextInput(attrs={"class":"border border-black text-xs"}),
+            "material_color": TextInput(attrs={"class":"border border-black text-xs"}),
+            "condition": TextInput(attrs={"class":"border border-black text-xs"}),
+            "detail": Textarea(attrs={"cols":"22", "rows":"3", "class":"border border-black align-middle text-xs"}),
+            "price": TextInput(attrs={"class":"border border-black text-xs"}),
+            "winning_bid": TextInput(attrs={"class":"border border-black text-xs"})
         }
