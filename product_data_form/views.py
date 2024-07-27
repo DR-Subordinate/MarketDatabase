@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
+from django.forms import modelformset_factory
 
 from .forms import ProductForm, MarketForm
 from .models import Product, Market
@@ -21,16 +22,31 @@ def index(request):
 
 def save_product(request, market_name, market_date):
     market = get_object_or_404(Market, name=market_name, date=market_date)
+
+    ProductFormSetNew = modelformset_factory(Product, form=ProductForm, extra=50)
+    ProductFormSetEdit = modelformset_factory(Product, form=ProductForm, extra=0)
+
     if request.method == "POST":
-        product_form = ProductForm(request.POST, request.FILES)
-        if product_form.is_valid():
-            product = product_form.save(commit=False)
-            product.market = market
-            product.save()
+        new_formset = ProductFormSetNew(request.POST, request.FILES, prefix='new', queryset=Product.objects.none())
+        edit_formset = ProductFormSetEdit(request.POST, request.FILES, prefix='edit', queryset=Product.objects.filter(market=market))
+
+        if new_formset.is_valid() and edit_formset.is_valid():
+            new_products = new_formset.save(commit=False)
+            for new_product in new_products:
+                new_product.market = market
+                new_product.save()
+
+            edited_products = edit_formset.save(commit=False)
+            for edited_product in edited_products:
+                edited_product.market = market
+                edited_product.save()
+
             return redirect("product_data_form:product", market_name=market_name, market_date=market_date)
     else:
-        product_form = ProductForm()
-    context = {"product_form": product_form, "market": market}
+        new_formset = ProductFormSetNew(queryset=Product.objects.none(), prefix='new')
+        edit_formset = ProductFormSetEdit(queryset=Product.objects.filter(market=market), prefix='edit')
+
+    context = {"new_formset": new_formset, "edit_formset": edit_formset, "market": market}
     return render(request, "product_data_form/product.html", context)
 
 def save_price(request):
