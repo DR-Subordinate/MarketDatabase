@@ -1,7 +1,7 @@
 {% extends "product_data_form/base.html" %}
 
 {% block content %}
-  <section class="flex flex-col items-start my-8 ml-8">
+  <section class="flex flex-col items-start my-8 ml-8 hidden" id="market_section">
     <form method="post" class="w-1/6">
       {% csrf_token %}
       {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
@@ -28,4 +28,17 @@
       {% endfor %}
     </div>
   </section>
+
+  <span class="font-bold text-green-600 cursor-pointer fixed bottom-9 left-14" id="market_span">
+    市場 +
+  </span>
+
+  <script>
+    const marketSection = document.getElementById("market_section");
+    const marketSpan = document.getElementById("market_span");
+    marketSpan.addEventListener("click", () => {
+      const isHidden = marketSection.classList.toggle("hidden");
+      marketSpan.textContent = isHidden ? "市場 +" : "市場 −";
+    });
+  </script>
 {% endblock %}
