@@ -33,7 +33,7 @@ def index(request):
     context = {"market_form": market_form, "markets": markets}
     return render(request, "product_data_form/index.html", context)
 
-def save_product(request, market_name, market_date):
+def product_main(request, market_name, market_date):
     market = get_object_or_404(Market, name=market_name, date=market_date)
 
     ProductFormSetNew = modelformset_factory(Product, form=ProductForm, extra=50)
