@@ -60,7 +60,7 @@ def product_main(request, market_name, market_date):
         edit_formset = ProductFormSetEdit(queryset=Product.objects.filter(market=market), prefix='edit')
 
     context = {"new_formset": new_formset, "edit_formset": edit_formset, "market": market}
-    return render(request, "product_data_form/product.html", context)
+    return render(request, "product_data_form/product_main.html", context)
 
 def save_price(request):
     if request.method == "POST":
