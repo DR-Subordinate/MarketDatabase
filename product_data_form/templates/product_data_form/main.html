@@ -1,0 +1,31 @@
+{% extends "product_data_form/base.html" %}
+
+{% block content %}
+  <section class="flex flex-col items-center my-8">
+    <form method="post" class="w-1/6">
+      {% csrf_token %}
+      {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+      <fieldset class="flex flex-col border">
+        <div class="p-1">
+          <label>
+            <span class="font-bold mr-4">日付</span>
+            {{ market_form.date.errors }} {{ market_form.date }}
+          </label>
+        </div>
+        <div class="p-1">
+          <label>
+            <span class="font-bold">市場名</span>
+            {{ market_form.name.errors }} {{ market_form.name }}
+          </label>
+        </div>
+        <input type="submit" name="save_market" value="市場を保存" class="cursor-pointer text-white bg-green-600 rounded p-1 mt-1 mx-auto">
+      </fieldset>
+    </form>
+
+    <div class="flex flex-col items-center mt-8 w-1/6">
+      {% for market in markets %}
+        <a target="_blank" href="{% url 'product_data_form:product_main' market_name=market.name market_date=market.date %}" class="underline text-blue-500 mb-2">{{ market.name }} {{ market.date }}</a>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}
