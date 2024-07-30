@@ -6,7 +6,17 @@ from .forms import ProductForm, MarketForm
 from .models import Product, Market
 
 def main(request):
-    pass
+    markets = Market.objects.all().order_by("-pk")
+    market_form = MarketForm()
+
+    if request.method == "POST":
+        market_form = MarketForm(request.POST)
+        if market_form.is_valid():
+            market_form.save()
+            return redirect("product_data_form:main")
+
+    context = {"market_form": market_form, "markets": markets}
+    return render(request, "product_data_form/main.html", context)
 
 def register(request):
     pass
