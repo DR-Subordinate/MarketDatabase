@@ -5,6 +5,9 @@ from django.forms import modelformset_factory
 from .forms import ProductForm, MarketForm
 from .models import Product, Market
 
+def main(request):
+    pass
+
 def register(request):
     pass
 
