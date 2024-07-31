@@ -54,7 +54,7 @@ def product_main(request, market_name, market_date):
                 edited_product.market = market
                 edited_product.save()
 
-            return redirect("product_data_form:product", market_name=market_name, market_date=market_date)
+            return redirect("product_data_form:product_main", market_name=market_name, market_date=market_date)
     else:
         new_formset = ProductFormSetNew(queryset=Product.objects.none(), prefix='new')
         edit_formset = ProductFormSetEdit(queryset=Product.objects.filter(market=market), prefix='edit')
