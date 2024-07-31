@@ -2,7 +2,7 @@
 
 {% block content %}
   <section>
-    <h1 class="text-3xl text-center font-bold mb-2">
+    <h1 class="text-3xl text-center font-bold my-2">
       {{ market.name}} {{ market.date}}
     </h1>
     <form method="post" id="product_form" enctype="multipart/form-data">
@@ -12,55 +12,14 @@
         商品を登録
         <span class="text-blue-500">+</span>
       </h2>
-      <table class="table-fixed w-full mb-8 mx-auto border border-black hidden" id="save_product_table">
-        <thead>
-          <tr class="bg-gray-300">
-            <th class="border border-black">画像</th>
-            <th class="border border-black">番号</th>
-            <th class="border border-black">ブランド名</th>
-            <th class="border border-black">商品名</th>
-            <th class="border border-black">型番</th>
-            <th class="border border-black">製造番号</th>
-            <th class="border border-black">素材・カラー</th>
-            <th class="border border-black">状態</th>
-            <th class="border border-black">詳細・備考</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for form in new_formset %}
-            <tr>
-              {{ form.id }}
-              <td class="p-1 border border-black overflow-hidden">
-                {{ form.image.errors }} {{ form.image }}
-              </td>
-              <td class="p-1 border border-black overflow-hidden">
-                {{ form.number.errors }} {{ form.number }}
-              </td>
-              <td class="p-1 border border-black overflow-hidden">
-                {{ form.brand_name.errors }} {{ form.brand_name }}
-              </td>
-              <td class="p-1 border border-black overflow-hidden">
-                {{ form.name.errors }} {{ form.name }}
-              </td>
-              <td class="p-1 border border-black overflow-hidden">
-                {{ form.model_number.errors }} {{ form.model_number }}
-              </td>
-              <td class="p-1 border border-black overflow-hidden">
-                {{ form.serial_number.errors }} {{ form.serial_number }}
-              </td>
-              <td class="p-1 border border-black overflow-hidden">
-                {{ form.material_color.errors }} {{ form.material_color }}
-              </td>
-              <td class="p-1 border border-black overflow-hidden">
-                {{ form.condition.errors }} {{ form.condition }}
-              </td>
-              <td class="p-1 border border-black overflow-hidden">
-                {{ form.detail.errors }} {{ form.detail }}
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="grid grid-cols-10 gap-2 mb-8 hidden" id="save_product_table">
+        {% for form in new_formset %}
+          {{ form.id }}
+          <div class="p-1">
+            {{ form.number.errors }} {{ form.number }}
+          </div>
+        {% endfor %}
+      </div>
 
       {{ edit_formset.management_form }}
       <h2 class="text-3xl text-center font-bold mb-2 cursor-pointer" id="edit_product_header">
