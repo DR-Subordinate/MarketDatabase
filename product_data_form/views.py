@@ -36,7 +36,7 @@ def index(request):
 def product_main(request, market_name, market_date):
     market = get_object_or_404(Market, name=market_name, date=market_date)
 
-    ProductFormSetNew = modelformset_factory(Product, form=ProductForm, extra=50)
+    ProductFormSetNew = modelformset_factory(Product, form=ProductForm, extra=200)
     ProductFormSetEdit = modelformset_factory(Product, form=ProductForm, extra=0)
 
     if request.method == "POST":
