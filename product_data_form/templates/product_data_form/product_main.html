@@ -102,26 +102,16 @@
     const saveProductHeaderText = document.querySelector("#save_product_header > .text-blue-500");
     const saveProductTable = document.getElementById("save_product_container")
     saveProductHeader.addEventListener("click", () => {
-      if (saveProductHeaderText.textContent === "+") {
-        saveProductHeaderText.textContent = "−";
-        saveProductTable.classList.toggle("hidden");
-      } else {
-        saveProductHeaderText.textContent = "+";
-        saveProductTable.classList.toggle("hidden");
-      }
+      const isHidden = saveProductTable.classList.toggle("hidden");
+      saveProductHeaderText.textContent = isHidden ? "+" : "−";
     });
 
     const editProductHeader = document.getElementById("edit_product_header");
     const editProductHeaderText = document.querySelector("#edit_product_header > .text-blue-500");
     const editProductTable = document.getElementById("edit_product_container")
     editProductHeader.addEventListener("click", () => {
-      if (editProductHeaderText.textContent === "+") {
-        editProductHeaderText.textContent = "−";
-        editProductTable.classList.toggle("hidden");
-      } else {
-        editProductHeaderText.textContent = "+";
-        editProductTable.classList.toggle("hidden");
-      }
+      const isHidden = editProductTable.classList.toggle("hidden");
+      editProductHeaderText.textContent = isHidden ? "+" : "−";
     });
   </script>
 {% endblock %}
