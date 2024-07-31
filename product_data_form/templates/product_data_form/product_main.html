@@ -12,7 +12,7 @@
         商品を登録
         <span class="text-blue-500">+</span>
       </h2>
-      <div class="grid grid-cols-10 gap-2 mb-8 hidden" id="save_product_table">
+      <div class="grid grid-cols-10 gap-2 mb-8 hidden" id="save_product_container">
         {% for form in new_formset %}
           {{ form.id }}
           <div class="p-1">
@@ -26,7 +26,7 @@
         商品を編集
         <span class="text-blue-500">+</span>
       </h2>
-      <table class="table-fixed w-full mb-8 mx-auto border border-black hidden" id="edit_product_table">
+      <table class="table-fixed w-full mb-8 mx-auto border border-black hidden" id="edit_product_container">
         <thead>
           <tr class="bg-gray-300">
             <th class="border border-black">画像</th>
@@ -100,7 +100,7 @@
 
     const saveProductHeader = document.getElementById("save_product_header");
     const saveProductHeaderText = document.querySelector("#save_product_header > .text-blue-500");
-    const saveProductTable = document.getElementById("save_product_table")
+    const saveProductTable = document.getElementById("save_product_container")
     saveProductHeader.addEventListener("click", () => {
       if (saveProductHeaderText.textContent === "+") {
         saveProductHeaderText.textContent = "−";
@@ -113,7 +113,7 @@
 
     const editProductHeader = document.getElementById("edit_product_header");
     const editProductHeaderText = document.querySelector("#edit_product_header > .text-blue-500");
-    const editProductTable = document.getElementById("edit_product_table")
+    const editProductTable = document.getElementById("edit_product_container")
     editProductHeader.addEventListener("click", () => {
       if (editProductHeaderText.textContent === "+") {
         editProductHeaderText.textContent = "−";
