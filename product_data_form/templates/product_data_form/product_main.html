@@ -15,7 +15,7 @@
       <div class="grid grid-cols-10 gap-2 mb-8 hidden" id="save_product_container">
         {% for form in new_formset %}
           {{ form.id }}
-          <div class="p-1">
+          <div class="text-center">
             {{ form.number.errors }} {{ form.number }}
           </div>
         {% endfor %}
