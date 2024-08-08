@@ -1,4 +1,4 @@
-from django.forms import ModelForm, DateInput, TextInput, Textarea, Select, FileInput
+from django.forms import ModelForm, DateInput, TextInput, Textarea, Select, FileInput, CheckboxInput
 from .models import Product, Market
 
 class MarketForm(ModelForm):
@@ -15,7 +15,7 @@ class ProductForm(ModelForm):
         model = Product
         fields = ["market", "image", "number", "brand_name", "name",
                   "model_number", "serial_number", "material_color",
-                  "condition", "detail", "price", "winning_bid"]
+                  "condition", "detail", "price", "winning_bid", "is_bidden"]
         widgets = {
             "market": Select(attrs={"class":"border border-black"}),
             "image": FileInput(attrs={"class":" text-xs"}),
@@ -28,5 +28,6 @@ class ProductForm(ModelForm):
             "condition": TextInput(attrs={"class":"border border-black text-xs"}),
             "detail": Textarea(attrs={"cols":"22", "rows":"3", "class":"border border-black align-middle text-xs"}),
             "price": TextInput(attrs={"class":"border border-black text-xs"}),
-            "winning_bid": TextInput(attrs={"class":"border border-black text-xs"})
+            "winning_bid": TextInput(attrs={"class":"border border-black text-xs"}),
+            "is_bidden": CheckboxInput(attrs={"class":"border border-black"})
         }
