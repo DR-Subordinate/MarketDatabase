@@ -65,6 +65,13 @@ def product_register(request, market_name, market_date):
     ProductFormSetEdit = modelformset_factory(Product, form=ProductForm, extra=0)
 
     if request.method == "POST":
+
+        if request.POST.get("action") == "delete":
+            product_id = request.POST.get("delete_product_id")
+            product_to_delete = get_object_or_404(Product, id=product_id)
+            product_to_delete.delete()
+            return redirect("product_data_form:product_register", market_name=market_name, market_date=market_date)
+
         edit_formset = ProductFormSetEdit(request.POST, request.FILES, prefix='edit', queryset=Product.objects.filter(market=market))
 
         if edit_formset.is_valid():
