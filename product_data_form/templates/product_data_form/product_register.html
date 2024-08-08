@@ -24,7 +24,6 @@
             <th class="border border-black">状態</th>
             <th class="border border-black">詳細・備考</th>
             <th class="border border-black">値段</th>
-            <th class="border border-black">落札価格</th>
             <th class="border border-black">落札</th>
           </tr>
         </thead>
@@ -64,9 +63,6 @@
               </td>
               <td class="p-1 border border-black overflow-hidden">
                 {{ form.price.errors }} {{ form.price }}
-              </td>
-              <td class="p-1 border border-black overflow-hidden">
-                {{ form.winning_bid.errors }} {{ form.winning_bid }}
               </td>
               <td class="p-1 border border-black overflow-hidden text-center">
                 <label>済{{ form.is_bidden.errors }} {{ form.is_bidden }}</label>
