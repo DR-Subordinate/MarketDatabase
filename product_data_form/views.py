@@ -59,8 +59,26 @@ def product_main(request, market_name, market_date):
     context = {"new_formset": new_formset, "edit_formset": edit_formset, "market": market}
     return render(request, "product_data_form/product_main.html", context)
 
-def product_register(request):
-    pass
+def product_register(request, market_name, market_date):
+    market = get_object_or_404(Market, name=market_name, date=market_date)
+
+    ProductFormSetEdit = modelformset_factory(Product, form=ProductForm, extra=0)
+
+    if request.method == "POST":
+        edit_formset = ProductFormSetEdit(request.POST, request.FILES, prefix='edit', queryset=Product.objects.filter(market=market))
+
+        if edit_formset.is_valid():
+            edited_products = edit_formset.save(commit=False)
+            for edited_product in edited_products:
+                edited_product.market = market
+                edited_product.save()
+
+            return redirect("product_data_form:product_register", market_name=market_name, market_date=market_date)
+    else:
+        edit_formset = ProductFormSetEdit(queryset=Product.objects.filter(market=market), prefix='edit')
+
+    context = {"edit_formset": edit_formset, "market": market}
+    return render(request, "product_data_form/product_register.html", context)
 
 def save_price(request):
     if request.method == "POST":
