@@ -18,9 +18,6 @@ def main(request):
     context = {"market_form": market_form, "markets": markets}
     return render(request, "product_data_form/main.html", context)
 
-def register(request):
-    pass
-
 def index(request):
     if request.method == "POST":
         market_form = MarketForm(request.POST)
@@ -61,6 +58,9 @@ def product_main(request, market_name, market_date):
 
     context = {"new_formset": new_formset, "edit_formset": edit_formset, "market": market}
     return render(request, "product_data_form/product_main.html", context)
+
+def product_register(request):
+    pass
 
 def save_price(request):
     if request.method == "POST":
