@@ -1,5 +1,7 @@
 {% extends "product_data_form/base.html" %}
 
+{% load widget_tweaks %}
+
 {% block content %}
   <section>
     <h1 class="text-3xl text-center font-bold my-2">
@@ -69,7 +71,7 @@
                 <label>済{{ form.is_bidden.errors }} {{ form.is_bidden }}</label>
               </td>
               <td class="p-1 border border-black overflow-hidden text-center">
-                {{ form.DELETE }}
+                {{ form.DELETE|add_class:"hidden" }}
                 <button type="button" class="text-white bg-red-600 p-1 rounded">削除する</button>
               </td>
             </tr>
