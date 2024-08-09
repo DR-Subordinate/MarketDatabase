@@ -69,11 +69,7 @@
                 <label>済{{ form.is_bidden.errors }} {{ form.is_bidden }}</label>
               </td>
               <td class="p-1 border border-black overflow-hidden text-center">
-                <form method="post">
-                  {% csrf_token %}
-                  <input type="hidden" name="delete_product_id" value="{{ form.instance.id }}">
-                  <button type="submit" name="action" value="delete" class="text-white bg-red-600 p-1 rounded">削除する</button>
-                </form>
+                {{ form.DELETE }}
               </td>
             </tr>
           {% endfor %}
