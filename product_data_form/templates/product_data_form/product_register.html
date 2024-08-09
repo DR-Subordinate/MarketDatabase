@@ -70,6 +70,7 @@
               </td>
               <td class="p-1 border border-black overflow-hidden text-center">
                 {{ form.DELETE }}
+                <button type="button" class="text-white bg-red-600 p-1 rounded">削除する</button>
               </td>
             </tr>
           {% endfor %}
@@ -86,5 +87,27 @@
         e.preventDefault();
       }
     });
+
+    const deleteButtons = document.querySelectorAll('[type="button"]');
+    for (const deleteButton of deleteButtons) {
+      deleteButton.addEventListener("click", () => {
+        const deleteCheckbox = deleteButton.closest(".text-center").querySelector('[name$="DELETE"]');
+
+        Swal.fire({
+          text: "本当にこの商品を削除しますか？",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "rgb(220, 38, 38)",
+          cancelButtonColor: "rgb(37, 99, 235)",
+          confirmButtonText: "削除",
+          cancelButtonText: "キャンセル"
+        }).then(result => {
+          if (result.isConfirmed) {
+            deleteCheckbox.checked = true;
+            productForm.submit();
+          }
+        });
+      });
+    }
   </script>
 {% endblock %}
