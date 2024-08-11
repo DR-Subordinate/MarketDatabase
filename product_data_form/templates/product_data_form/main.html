@@ -24,7 +24,8 @@
 
     <div class="flex flex-col items-center mt-8 w-1/6">
       {% for market in markets %}
-        <a target="_blank" href="{% url 'product_data_form:product_main' market_name=market.name market_date=market.date %}" class="underline text-blue-500 mb-2">{{ market.name }} {{ market.date }}</a>
+        <a target="_blank" href="{% url 'product_data_form:product_main' market_name=market.name market_date=market.date %}" class="underline text-blue-500 mb-2">{{ market.name }} {{ market.date }}(main)</a>
+        <a target="_blank" href="{% url 'product_data_form:product_register' market_name=market.name market_date=market.date %}" class="underline text-blue-500 mb-2">{{ market.name }} {{ market.date }}(register)</a>
       {% endfor %}
     </div>
   </section>
