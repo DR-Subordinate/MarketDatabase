@@ -22,6 +22,7 @@ class Product(models.Model):
     price = models.CharField(max_length=200, blank=True)
     winning_bid = models.CharField(max_length=200, blank=True)
     is_bidden = models.BooleanField(default=False)
+    is_inspected = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
