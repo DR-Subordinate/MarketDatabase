@@ -4,6 +4,7 @@
   <section>
     <h1 class="text-3xl text-center font-bold my-2">
       {{ market.name}} {{ market.date}}
+      <a target="_blank" href="{% url 'product_data_form:product_register' market_name=market.name market_date=market.date %}" class="underline text-blue-500">register</a>
     </h1>
     <form method="post" id="product_form" enctype="multipart/form-data">
       {% csrf_token %}
