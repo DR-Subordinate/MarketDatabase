@@ -4,7 +4,7 @@ from .settings import *
 
 SECRET_KEY = os.environ["SECRET_KEY"]
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["marketdb.across-shop.com"]
 
