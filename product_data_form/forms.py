@@ -13,9 +13,10 @@ class MarketForm(ModelForm):
 class ProductForm(ModelForm):
     class Meta:
         model = Product
-        fields = ["market", "image", "number", "brand_name", "name",
-                  "model_number", "serial_number", "material_color",
-                  "condition", "detail", "price", "winning_bid", "is_bidden"]
+        fields = ["market", "image", "number", "brand_name",
+                  "name", "model_number", "serial_number",
+                  "material_color", "condition", "detail", "price",
+                  "winning_bid", "is_bidden", "is_inspected"]
         widgets = {
             "market": Select(attrs={"class":"border border-black"}),
             "image": FileInput(attrs={"class":" text-xs"}),
@@ -29,5 +30,6 @@ class ProductForm(ModelForm):
             "detail": Textarea(attrs={"cols":"22", "rows":"3", "class":"border border-black align-middle text-xs"}),
             "price": TextInput(attrs={"class":"border border-black text-xs"}),
             "winning_bid": TextInput(attrs={"class":"border border-black text-xs"}),
-            "is_bidden": CheckboxInput(attrs={"class":"border border-black"})
+            "is_bidden": CheckboxInput(attrs={"class":"border border-black"}),
+            "is_inspected": CheckboxInput(attrs={"class":"border border-black"})
         }
