@@ -118,7 +118,7 @@ def search(request):
                 Q(detail__icontains=search_query) |
                 Q(price__icontains=search_query) |
                 Q(winning_bid__icontains=search_query)
-            )
+            ).exclude(winning_bid__isnull=True).exclude(winning_bid__exact='')
         else:
             return render(request, "product_data_form/search.html")
     return render(request, "product_data_form/search.html", {"products": products})
