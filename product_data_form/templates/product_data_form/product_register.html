@@ -90,6 +90,13 @@
       }
     });
 
+    document.addEventListener("keydown", e => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        e.preventDefault();
+        productForm.submit();
+      }
+    });
+
     const deleteButtons = document.querySelectorAll('[type="button"]');
     for (const deleteButton of deleteButtons) {
       deleteButton.addEventListener("click", () => {
