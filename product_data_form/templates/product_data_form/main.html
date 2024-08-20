@@ -26,7 +26,6 @@
       {% for market in markets %}
         <div class="border border-black mb-2 w-full text-center">
           <a target="_blank" href="{% url 'product_data_form:product_main' market_name=market.name market_date=market.date %}" class="underline text-blue-500">{{ market.name }} {{ market.date }}(main)</a><br>
-          <a target="_blank" href="{% url 'product_data_form:product_register' market_name=market.name market_date=market.date %}" class="underline text-blue-500">{{ market.name }} {{ market.date }}(register)</a>
         </div>
       {% endfor %}
     </div>
