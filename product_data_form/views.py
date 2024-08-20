@@ -34,7 +34,7 @@ def product_main(request, market_name, market_date):
     market = get_object_or_404(Market, name=market_name, date=market_date)
 
     ProductFormSetNew = modelformset_factory(Product, form=ProductForm, extra=200)
-    ProductFormSetEdit = modelformset_factory(Product, form=ProductForm, extra=0)
+    ProductFormSetEdit = modelformset_factory(Product, form=ProductForm, extra=0, can_delete=True)
 
     if request.method == "POST":
         new_formset = ProductFormSetNew(request.POST, request.FILES, prefix='new', queryset=Product.objects.none())
@@ -50,6 +50,9 @@ def product_main(request, market_name, market_date):
             for edited_product in edited_products:
                 edited_product.market = market
                 edited_product.save()
+
+            for deleted_product in edit_formset.deleted_objects:
+                deleted_product.delete()
 
             return redirect("product_data_form:product_main", market_name=market_name, market_date=market_date)
     else:
