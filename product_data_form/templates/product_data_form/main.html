@@ -1,5 +1,7 @@
 {% extends "product_data_form/base.html" %}
 
+{% load check_market_age %}
+
 {% block content %}
   <section class="flex flex-col items-center my-8">
     <form method="post" class="w-1/6">
@@ -24,7 +26,9 @@
 
     <div class="flex flex-col items-center mt-8 w-1/6">
       {% for market in markets %}
-        <a target="_blank" href="{% url 'product_data_form:product_main' market_name=market.name market_date=market.date %}" class="mb-1 underline text-blue-500 text-center text-[17px]">{{ market.name }} {{ market.date }}</a>
+        {% if not market.date|is_older_than_six_months %}
+          <a target="_blank" href="{% url 'product_data_form:product_main' market_name=market.name market_date=market.date %}" class="mb-1 underline text-blue-500 text-center text-[17px]">{{ market.name }} {{ market.date }}</a>
+        {% endif %}
       {% endfor %}
     </div>
     <p class="text-center font-bold cursor-pointer" id="see_more">
@@ -33,7 +37,9 @@
     </p>
     <div class="flex flex-col items-center mt-1 w-1/6 hidden" id="old_link_list">
       {% for market in markets %}
-        <a target="_blank" href="{% url 'product_data_form:product_main' market_name=market.name market_date=market.date %}" class="mb-1 underline text-blue-500 text-center text-[17px]">{{ market.name }} {{ market.date }}</a>
+        {% if market.date|is_older_than_six_months %}
+          <a target="_blank" href="{% url 'product_data_form:product_main' market_name=market.name market_date=market.date %}" class="mb-1 underline text-blue-500 text-center text-[17px]">{{ market.name }} {{ market.date }}</a>
+        {% endif %}
       {% endfor %}
     </div>
   </section>
