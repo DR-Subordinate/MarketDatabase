@@ -26,7 +26,7 @@ def product_main(request, market_name, market_date):
 
     if request.method == "POST":
         new_formset = ProductFormSetNew(request.POST, request.FILES, prefix='new', queryset=Product.objects.none())
-        edit_formset = ProductFormSetEdit(request.POST, request.FILES, prefix='edit', queryset=Product.objects.filter(market=market))
+        edit_formset = ProductFormSetEdit(request.POST, request.FILES, prefix='edit', queryset=Product.objects.filter(market=market).order_by('-is_bidden'))
 
         if new_formset.is_valid() and edit_formset.is_valid():
             new_products = new_formset.save(commit=False)
@@ -45,7 +45,7 @@ def product_main(request, market_name, market_date):
             return redirect("product_data_form:product_main", market_name=market_name, market_date=market_date)
     else:
         new_formset = ProductFormSetNew(queryset=Product.objects.none(), prefix='new')
-        edit_formset = ProductFormSetEdit(queryset=Product.objects.filter(market=market), prefix='edit')
+        edit_formset = ProductFormSetEdit(queryset=Product.objects.filter(market=market).order_by('-is_bidden'), prefix='edit')
 
     context = {"new_formset": new_formset, "edit_formset": edit_formset, "market": market}
     return render(request, "product_data_form/product_main.html", context)
@@ -56,7 +56,7 @@ def product_register(request, market_name, market_date):
     ProductFormSetEdit = modelformset_factory(Product, form=ProductForm, extra=0, can_delete=True)
 
     if request.method == "POST":
-        edit_formset = ProductFormSetEdit(request.POST, request.FILES, prefix='edit', queryset=Product.objects.filter(market=market))
+        edit_formset = ProductFormSetEdit(request.POST, request.FILES, prefix='edit', queryset=Product.objects.filter(market=market).order_by('-is_bidden'))
 
         if edit_formset.is_valid():
             edited_products = edit_formset.save(commit=False)
@@ -69,7 +69,7 @@ def product_register(request, market_name, market_date):
 
             return redirect("product_data_form:product_register", market_name=market_name, market_date=market_date)
     else:
-        edit_formset = ProductFormSetEdit(queryset=Product.objects.filter(market=market), prefix='edit')
+        edit_formset = ProductFormSetEdit(queryset=Product.objects.filter(market=market).order_by('-is_bidden'), prefix='edit')
 
     context = {"edit_formset": edit_formset, "market": market}
     return render(request, "product_data_form/product_register.html", context)
