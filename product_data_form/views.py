@@ -1,9 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.forms import modelformset_factory
+from django.core.files.base import ContentFile
 
 from .forms import ProductForm, MarketForm
 from .models import Product, Market
+
+import io
+from datetime import datetime
+from .generate_invoice_pdf import generate_invoice_pdf
 
 def main(request):
     markets = Market.objects.all().order_by("-pk")
@@ -56,18 +61,27 @@ def product_register(request, market_name, market_date):
     ProductFormSetEdit = modelformset_factory(Product, form=ProductForm, extra=0, can_delete=True)
 
     if request.method == "POST":
-        edit_formset = ProductFormSetEdit(request.POST, request.FILES, prefix='edit', queryset=Product.objects.filter(market=market).order_by('-is_bidden'))
-
-        if edit_formset.is_valid():
-            edited_products = edit_formset.save(commit=False)
-            for edited_product in edited_products:
-                edited_product.market = market
-                edited_product.save()
-
-            for deleted_product in edit_formset.deleted_objects:
-                deleted_product.delete()
-
+        if 'generate_invoice' in request.POST:
+            pdf_buffer = io.BytesIO()
+            bidden_products = market.product_set.filter(is_bidden=True)
+            generate_invoice_pdf(pdf_buffer, market, bidden_products)
+            pdf_buffer.seek(0)
+            current_date = datetime.now().strftime('%Y-%m-%d')
+            market.invoice_pdf.save(f'{current_date}.pdf', ContentFile(pdf_buffer.getvalue()), save=True)
             return redirect("product_data_form:product_register", market_name=market_name, market_date=market_date)
+        else:
+            edit_formset = ProductFormSetEdit(request.POST, request.FILES, prefix='edit', queryset=Product.objects.filter(market=market).order_by('-is_bidden'))
+
+            if edit_formset.is_valid():
+                edited_products = edit_formset.save(commit=False)
+                for edited_product in edited_products:
+                    edited_product.market = market
+                    edited_product.save()
+
+                for deleted_product in edit_formset.deleted_objects:
+                    deleted_product.delete()
+
+                return redirect("product_data_form:product_register", market_name=market_name, market_date=market_date)
     else:
         edit_formset = ProductFormSetEdit(queryset=Product.objects.filter(market=market).order_by('-is_bidden'), prefix='edit')
 
