@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import FileResponse
 from django.db.models import Q
 from django.forms import modelformset_factory
 from django.core.files.base import ContentFile
@@ -7,6 +8,7 @@ from .forms import ProductForm, MarketForm
 from .models import Product, Market
 
 import io
+import os
 from datetime import datetime
 from .generate_invoice_pdf import generate_invoice_pdf
 
@@ -15,10 +17,17 @@ def main(request):
     market_form = MarketForm()
 
     if request.method == "POST":
-        market_form = MarketForm(request.POST)
-        if market_form.is_valid():
-            market_form.save()
-            return redirect("product_data_form:main")
+        if "download_pdf" in request.POST:
+            market_id = request.POST.get('market_id')
+            market = get_object_or_404(Market, id=market_id)
+            if market.invoice_pdf:
+                original_filename = os.path.basename(market.invoice_pdf.name)
+                return FileResponse(market.invoice_pdf.open('rb'), as_attachment=True, filename=original_filename)
+        else:
+            market_form = MarketForm(request.POST)
+            if market_form.is_valid():
+                market_form.save()
+                return redirect("product_data_form:main")
 
     context = {"market_form": market_form, "markets": markets}
     return render(request, "product_data_form/main.html", context)
