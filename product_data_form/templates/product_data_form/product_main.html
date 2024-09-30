@@ -27,9 +27,8 @@
       {{ edit_formset.management_form }}
       <h2 class="text-3xl text-center font-bold mb-2 cursor-pointer" id="edit_product_header">
         商品を編集
-        <span class="text-blue-500">+</span>
       </h2>
-      <table class="table-fixed w-full mb-8 mx-auto border border-black hidden" id="edit_product_container">
+      <table class="table-fixed w-full mb-8 mx-auto border border-black" id="edit_product_container">
         <thead>
           <tr class="bg-gray-300">
             <th class="border border-black">画像</th>
@@ -148,14 +147,6 @@
     saveProductHeader.addEventListener("click", () => {
       const isHidden = saveProductTable.classList.toggle("hidden");
       saveProductHeaderText.textContent = isHidden ? "+" : "−";
-    });
-
-    const editProductHeader = document.getElementById("edit_product_header");
-    const editProductHeaderText = document.querySelector("#edit_product_header > .text-blue-500");
-    const editProductTable = document.getElementById("edit_product_container")
-    editProductHeader.addEventListener("click", () => {
-      const isHidden = editProductTable.classList.toggle("hidden");
-      editProductHeaderText.textContent = isHidden ? "+" : "−";
     });
   </script>
 {% endblock %}
