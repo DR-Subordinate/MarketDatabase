@@ -148,5 +148,16 @@
       const isHidden = saveProductTable.classList.toggle("hidden");
       saveProductHeaderText.textContent = isHidden ? "+" : "−";
     });
+
+    const priceInputs = document.querySelectorAll('input[name$="price"], input[name$="winning_bid"]');
+    for (const priceInput of priceInputs) {
+      priceInput.addEventListener('blur', e => {
+        const value = e.target.value;
+        if (value) {
+          const formattedValue = Number(value.replace(/,/g, '')).toLocaleString();
+          e.target.value = formattedValue;
+        }
+      });
+    }
   </script>
 {% endblock %}
