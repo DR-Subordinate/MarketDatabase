@@ -29,6 +29,7 @@
             <th class="border border-black">詳細・備考</th>
             <th class="border border-black">値段</th>
             <th class="border border-black">落札</th>
+            <th class="border border-black">検品</th>
             <th class="border border-black">削除</th>
           </tr>
         </thead>
@@ -71,6 +72,9 @@
               </td>
               <td class="p-1 border border-black overflow-hidden text-center">
                 <label>済{{ form.is_bidden.errors }} {{ form.is_bidden }}</label>
+              </td>
+              <td class="p-1 border border-black overflow-hidden text-center">
+                <label>済{{ form.is_inspected.errors }} {{ form.is_inspected }}</label>
               </td>
               <td class="p-1 border border-black overflow-hidden text-center">
                 {{ form.DELETE|add_class:"hidden" }}
