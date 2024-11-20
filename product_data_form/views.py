@@ -22,7 +22,7 @@ def main(request):
             market = get_object_or_404(Market, id=market_id)
             if market.invoice_pdf:
                 original_filename = os.path.basename(market.invoice_pdf.name)
-                return FileResponse(market.invoice_pdf.open('rb'), as_attachment=True, filename=original_filename)
+                return FileResponse(market.invoice_pdf.open('rb'), filename=original_filename)
         else:
             market_form = MarketForm(request.POST)
             if market_form.is_valid():
