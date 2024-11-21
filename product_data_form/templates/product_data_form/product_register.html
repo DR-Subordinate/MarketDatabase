@@ -4,9 +4,22 @@
 
 {% block content %}
   <section>
-    <h1 class="text-3xl text-center font-bold my-2">
-      {{ market.name}} {{ market.date}}
-    </h1>
+    <div class="font-bold flex justify-center items-center gap-4 my-2">
+      <h1 class="text-3xl text-center">
+        {{ market.name}} {{ market.date}}
+      </h1>
+      {% if market.invoice_pdf %}
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" name="download_pdf" class="cursor-pointer text-white text-lg bg-green-600 rounded w-32 p-1 flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>請求書</span>
+          </button>
+        </form>
+    {% endif %}
+    </div>
     <form method="post" id="product_form" enctype="multipart/form-data">
       {% csrf_token %}
       {{ edit_formset.management_form }}
