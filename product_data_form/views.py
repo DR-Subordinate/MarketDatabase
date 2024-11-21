@@ -78,6 +78,10 @@ def product_register(request, market_name, market_date):
             current_date = datetime.now().strftime('%Y-%m-%d')
             market.invoice_pdf.save(f'{current_date}.pdf', ContentFile(pdf_buffer.getvalue()), save=True)
             return redirect("product_data_form:product_register", market_name=market_name, market_date=market_date)
+        elif "download_pdf" in request.POST:
+            if market.invoice_pdf:
+                original_filename = os.path.basename(market.invoice_pdf.name)
+                return FileResponse(market.invoice_pdf.open('rb'), filename=original_filename)
         else:
             edit_formset = ProductFormSetEdit(request.POST, request.FILES, prefix='edit', queryset=Product.objects.filter(market=market).order_by('-is_bidden'))
 
