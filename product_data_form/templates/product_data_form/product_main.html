@@ -49,7 +49,7 @@
         </thead>
         <tbody>
           {% for form in edit_formset %}
-            <tr>
+            <tr {% if forloop.counter|divisibleby:2 %} class="bg-gray-200" {% endif %}>
               {{ form.id }}
               <td class="p-1 border border-black overflow-hidden">
                 {% if form.instance.image %}
