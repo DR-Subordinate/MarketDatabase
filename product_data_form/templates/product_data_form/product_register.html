@@ -57,7 +57,7 @@
                 {{ form.image.errors }} {{ form.image }}
               </td>
               <td class="p-1 border border-black overflow-hidden">
-                {{ form.price.errors }} {{ form.price }}
+                {{ form.price.errors }} {{ form.price|attr:"disabled" }}
               </td>
               <td class="p-1 border border-black overflow-hidden">
                 {{ form.number.errors }} {{ form.number }}
