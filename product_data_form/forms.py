@@ -27,7 +27,7 @@ class ProductForm(ModelForm):
             "serial_number": TextInput(attrs={"class":"border border-black text-xs"}),
             "material_color": TextInput(attrs={"class":"border border-black text-xs"}),
             "condition": TextInput(attrs={"class":"border border-black text-xs"}),
-            "detail": Textarea(attrs={"cols":"32", "rows":"3", "class":"border border-black align-middle text-xs"}),
+            "detail": Textarea(attrs={"rows":"3", "class":"border border-black align-middle text-xs"}),
             "price": TextInput(attrs={"class":"border border-black text-xs"}),
             "winning_bid": TextInput(attrs={"class":"border border-black text-xs"}),
             "is_bidden": CheckboxInput(attrs={"class":"border border-black"}),
