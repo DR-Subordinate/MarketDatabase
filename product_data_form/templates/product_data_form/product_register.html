@@ -147,5 +147,48 @@
         }
       });
     }
+
+    const brandMappings = {
+      'え': 'エルメス',
+      'しゃ': 'シャネル',
+    };
+    const brandInputs = document.querySelectorAll('input[name$="brand_name"]');
+    for (const brandInput of brandInputs) {
+      brandInput.addEventListener('input', e => {
+        const value = e.target.value;
+        if (value && brandMappings[value]) {
+          e.target.value = brandMappings[value];
+        }
+      });
+    }
+
+    const productNameMappings = {
+      'ぴこ': 'ピコタンロック',
+      'がー': 'ガーデンパーティ',
+      'じっぴ': 'ジッピーウォレット',
+      'みゅ': 'ミュルティクレ',
+    };
+    const productNameInputs = document.querySelectorAll('input[name$="-name"]');
+    for (const productNameInput of productNameInputs) {
+      productNameInput.addEventListener('input', e => {
+        const value = e.target.value;
+        if (value && productNameMappings[value]) {
+          e.target.value = productNameMappings[value];
+        }
+      });
+    }
+
+    const materialColorMappings = {
+      'とり': 'トリヨンクレマンス',
+    };
+    const materialColorInputs = document.querySelectorAll('input[name$="material_color"]');
+    for (const materialColorInput of materialColorInputs) {
+      materialColorInput.addEventListener('input', e => {
+        const value = e.target.value;
+        if (value && materialColorMappings[value]) {
+          e.target.value = materialColorMappings[value];
+        }
+      });
+    }
   </script>
 {% endblock %}
