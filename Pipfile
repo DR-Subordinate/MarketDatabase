@@ -10,6 +10,8 @@ pillow = "*"
 django-widget-tweaks = "*"
 django-cleanup = "*"
 reportlab = "*"
+requests = "*"
+beautifulsoup4 = "*"
 
 [dev-packages]
 
