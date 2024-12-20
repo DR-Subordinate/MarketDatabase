@@ -226,26 +226,26 @@ class SBA:
 
     def _save_image(self, product_data_string):
         """
-        Extract image URL from product data and save a resized version.
+        Extract image URL, process the image, and return optimized image content.
 
         Args:
             product_data_string: Raw JavaScript string containing product data
 
         Returns:
-            str: Path to saved image file if successful, None otherwise
+            tuple: A tuple containing (image_content, filename), where:
+                - image_content: Processed image as bytes if successful, None if failed
+                - filename: Original filename from URL if successful, None if failed
 
         Notes:
             - Image is resized to max dimensions of 800x800 pixels
             - Uses LANCZOS resampling for high quality resizing
-            - Saved with optimization and 80% JPEG quality
-            - Images are saved to self.image_directory path
+            - JPEG format with 80% quality and optimization
         """
         image_url_pattern = r"image_urls: JSON\.parse\('\[\\u0022(.*?)\\u0022"
         image_url_match = re.search(image_url_pattern, product_data_string)
         image_url = image_url_match.group(1)
         image_url = image_url.replace("\\\\\\/", "/")
 
-        os.makedirs(self.image_directory, exist_ok=True)
         filename = os.path.basename(urlparse(image_url).path)
 
         response = requests.get(image_url)
@@ -253,9 +253,13 @@ class SBA:
             image = Image.open(io.BytesIO(response.content))
             max_size = (800, 800)
             image.thumbnail(max_size, Image.Resampling.LANCZOS)
-            filepath = os.path.join(self.image_directory, filename)
-            image.save(filepath, optimize=True, quality=80)
-            return filepath # Delete this line later!
+
+            img_byte_arr = io.BytesIO()
+            image.save(img_byte_arr, format='JPEG', optimize=True, quality=80)
+            img_byte_arr = img_byte_arr.getvalue()
+            return img_byte_arr, filename
+
+        return None, None
 
     def collect_product_data(self, product_links):
         """
