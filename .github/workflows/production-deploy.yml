@@ -26,6 +26,7 @@ jobs:
             **/.**/**
             .editorconfig
             .gitignore
+            .env.local
 
       # SSH 経由でコマンドを実行する
       - name: SSH Remote Commands
@@ -48,6 +49,8 @@ jobs:
             DATABASE_NAME=${{ secrets.DATABASE_NAME_PROD }}
             DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME_PROD }}
             DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD_PROD }}
+            EMAIL=${{ secrets.EMAIL }}
+            PASSWORD=${{secrets.PASSWORD }}
             EOF
 
             # 仮想環境を作成
