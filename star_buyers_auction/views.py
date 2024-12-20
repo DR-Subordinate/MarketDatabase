@@ -8,7 +8,7 @@ from .scrape_sba import SBA
 
 def index(request):
     if request.method == "POST":
-        date = request.POST.get('auction_date')
+        end_date = request.POST.get('auction_end_date')
 
         try:
             load_dotenv(dotenv_path=".env.local")
@@ -19,13 +19,13 @@ def index(request):
             sba = SBA(
                 email=email,
                 password=password,
-                end_date=date,
+                end_date=end_date,
                 image_directory=image_directory
             )
 
             if sba.login():
                 auction = Auction.objects.create(
-                    date=datetime.strptime(date, '%Y-%m-%d').date(),
+                    date=datetime.strptime(end_date, '%Y-%m-%d').date(),
                     name="スタバイ"
                 )
 
