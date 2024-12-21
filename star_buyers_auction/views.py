@@ -14,13 +14,11 @@ def index(request):
             load_dotenv(dotenv_path=".env.local")
             email = os.environ["EMAIL"]
             password = os.environ["PASSWORD"]
-            image_directory = os.environ["IMAGE_DIRECTORY"]
 
             sba = SBA(
                 email=email,
                 password=password,
                 end_date=end_date,
-                image_directory=image_directory
             )
 
             if sba.login():
