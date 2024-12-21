@@ -1,22 +1,23 @@
 import os
 from PIL import Image
-from django.conf import settings
+from .models import Product
 
 def reduce_sba_image_sizes():
     """
-    Reduces file sizes of JPG images in star_buyers_auction directory through compression
+    Reduces file sizes of all uncompressed JPG images,
+    starting from the oldest auction date
     """
-    star_buyers_auction_dir = os.path.join(settings.MEDIA_ROOT, 'star_buyers_auction')
+    uncompressed_products = Product.objects.filter(
+        is_image_compressed=False,
+        image__isnull=False
+    ).order_by('auction__date')
 
-    if not os.path.exists(star_buyers_auction_dir):
-        return
-
-    for filename in os.listdir(star_buyers_auction_dir):
-        if filename.lower().endswith(('.jpg', '.jpeg')):
-            filepath = os.path.join(star_buyers_auction_dir, filename)
-
+    for product in uncompressed_products:
+        if product.image and os.path.exists(product.image.path):
             try:
-                with Image.open(filepath) as img:
-                    img.save(filepath, optimize=True, quality=50, progressive=True)
+                with Image.open(product.image.path) as img:
+                    img.save(product.image.path, optimize=True, quality=50, progressive=True)
+                product.is_image_compressed = True
+                product.save()
             except Exception as e:
-                print(f"Error processing {filename}: {str(e)}")
+                print(f"Error processing {product.image.name}: {str(e)}")
