@@ -6,13 +6,13 @@ from dotenv import load_dotenv
 from .models import Auction, Product
 from .scrape_sba import SBA
 from .get_storage_info import get_disk_usage
-from .reduce_image_sizes import reduce_sba_image_sizes
+from .compress_images import compress_sba_images
 
 def index(request):
     storage_info = get_disk_usage()
     compression_message = None
     if storage_info['usage_percent'] > 95:
-        reduce_sba_image_sizes()
+        compress_sba_images()
         storage_info = get_disk_usage()
         compression_message = "空き容量を確保するため、画像を圧縮しました。"
 
