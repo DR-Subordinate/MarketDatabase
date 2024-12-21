@@ -19,5 +19,21 @@
         <input type="submit" name="save_market" value="商品情報を取得" class="cursor-pointer text-white bg-[#475499] rounded p-1 mt-2 mx-auto">
       </fieldset>
     </form>
+
+    <section class="mt-8 w-full max-w-md">
+      <h1 class="text-xl text-[#475499] mb-4">ストレージ状況</h1>
+      <div class="bg-white rounded-lg shadow p-4">
+        <div class="flex justify-between mb-1">
+          <span class="text-sm font-medium">使用済み容量: {{ storage_info.used_gb }}GB / {{ storage_info.total_gb }}GB</span>
+          <span class="text-sm font-medium">{{ storage_info.usage_percent }}%</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2.5">
+          <div class="bg-[#475499] rounded-full h-2.5" style="width: {{ storage_info.usage_percent }}%"></div>
+        </div>
+        <div class="text-sm text-gray-600">
+          <p>空き容量: {{ storage_info.free_gb }}GB</p>
+        </div>
+      </div>
+    </section>
   </section>
 {% endblock %}
