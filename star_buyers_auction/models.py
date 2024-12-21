@@ -18,6 +18,7 @@ class Product(models.Model):
     price = models.CharField(max_length=200, blank=True)
     current_bidding_price = models.CharField(max_length=200, blank=True)
     memo = models.TextField(blank=True)
+    product_link = models.CharField(max_length=200, blank=True, unique=True)
 
     def __str__(self):
         return f"{self.brand_name} {self.name}"
