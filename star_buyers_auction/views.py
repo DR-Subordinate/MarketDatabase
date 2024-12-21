@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 from .models import Auction, Product
 from .scrape_sba import SBA
+from .get_storage_info import get_disk_usage
 
 def index(request):
     if request.method == "POST":
@@ -59,4 +60,5 @@ def index(request):
             return render(request, "star_buyers_auction/index.html",
                         {"error_message": f"エラーが発生しました: {str(e)}"})
 
-    return render(request, "star_buyers_auction/index.html")
+    storage_info = get_disk_usage()
+    return render(request, "star_buyers_auction/index.html", {"storage_info": storage_info})
