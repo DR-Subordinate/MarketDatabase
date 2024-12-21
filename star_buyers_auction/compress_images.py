@@ -2,7 +2,7 @@ import os
 from PIL import Image
 from .models import Product
 
-def reduce_sba_image_sizes():
+def compress_sba_images():
     """
     Reduces file sizes of all uncompressed JPG images,
     starting from the oldest auction date
