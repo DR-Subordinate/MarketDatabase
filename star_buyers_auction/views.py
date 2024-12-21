@@ -11,9 +11,12 @@ def index(request):
         end_date = request.POST.get('auction_end_date')
 
         try:
-            load_dotenv(dotenv_path=".env.local")
-            email = os.environ["EMAIL"]
-            password = os.environ["PASSWORD"]
+            if not load_dotenv(dotenv_path=".env.local"):
+                email = os.environ["EMAIL"]
+                password = os.environ["PASSWORD"]
+            else:
+                email = os.environ["EMAIL"]
+                password = os.environ["PASSWORD"]
 
             sba = SBA(
                 email=email,
