@@ -11,6 +11,7 @@ class Auction(models.Model):
 class Product(models.Model):
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE, blank=True, null=True)
     image = models.ImageField(upload_to='star_buyers_auction/', null=True, blank=True)
+    is_image_compressed = models.BooleanField(default=False)
     brand_name = models.CharField(max_length=200, blank=True)
     name = models.CharField(max_length=200, blank=True)
     ended_at = models.DateField(null=True, blank=True)
