@@ -30,7 +30,7 @@ def index(request):
                     name="スタバイ"
                 )
 
-                existing_products = Product.objects.values_list('brand_name', 'name')
+                existing_products = set(Product.objects.values_list('brand_name', 'name'))
 
                 product_links = sba.collect_product_links()
                 product_data = sba.collect_product_data(product_links)
