@@ -10,7 +10,7 @@ from PIL import Image
 import dotenv
 
 class SBA:
-    def __init__(self, email, password, end_date, image_directory):
+    def __init__(self, email, password, end_date):
         """
         Initialize SBA with credentials and image directory
 
@@ -18,7 +18,6 @@ class SBA:
             email: Login email
             password: Login password
             end_date: Date string in format 'YYYY-MM-DD' to filter products
-            image_directory: Directory to save product images
         """
         self.base_url = "https://www.starbuyers-global-auction.com"
         self.session = None
@@ -26,7 +25,6 @@ class SBA:
         self.email = email
         self.password = password
         self.end_date = end_date
-        self.image_directory = image_directory
 
     def login(self):
         """Log into the website"""
@@ -310,8 +308,7 @@ def main():
     dotenv.load_dotenv(dotenv_path=".env.local")
     EMAIL = os.environ["EMAIL"]
     PASSWORD = os.environ["PASSWORD"]
-    IMAGE_DIRECTORY = os.environ["IMAGE_DIRECTORY"]
-    sba = SBA(email=EMAIL, password=PASSWORD, end_date="2024-12-14", image_directory=IMAGE_DIRECTORY)
+    sba = SBA(email=EMAIL, password=PASSWORD, end_date="2024-12-14")
 
     if sba.login():
         product_links = sba.collect_product_links()
