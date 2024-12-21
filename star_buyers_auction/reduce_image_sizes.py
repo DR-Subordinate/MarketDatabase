@@ -10,7 +10,7 @@ def reduce_sba_image_sizes():
     uncompressed_products = Product.objects.filter(
         is_image_compressed=False,
         image__isnull=False
-    ).order_by('auction__date')
+    ).order_by('auction__date')[:100]
 
     for product in uncompressed_products:
         if product.image and os.path.exists(product.image.path):
