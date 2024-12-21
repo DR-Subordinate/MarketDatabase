@@ -6,8 +6,14 @@ from dotenv import load_dotenv
 from .models import Auction, Product
 from .scrape_sba import SBA
 from .get_storage_info import get_disk_usage
+from .reduce_image_sizes import reduce_sba_image_sizes
 
 def index(request):
+    storage_info = get_disk_usage()
+    if storage_info['usage_percent'] > 95:
+        reduce_sba_image_sizes()
+        storage_info = get_disk_usage()
+
     if request.method == "POST":
         end_date = request.POST.get('auction_end_date')
 
@@ -60,5 +66,4 @@ def index(request):
             return render(request, "star_buyers_auction/index.html",
                         {"error_message": f"エラーが発生しました: {str(e)}"})
 
-    storage_info = get_disk_usage()
     return render(request, "star_buyers_auction/index.html", {"storage_info": storage_info})
