@@ -30,22 +30,25 @@ def index(request):
                     name="スタバイ"
                 )
 
+                existing_products = Product.objects.values_list('brand_name', 'name')
+
                 product_links = sba.collect_product_links()
                 product_data = sba.collect_product_data(product_links)
 
                 for item in product_data:
-                    image_content, image_name = item['image']
-                    Product.objects.create(
-                        auction=auction,
-                        image=ContentFile(image_content, name=image_name) if image_content else None,
-                        brand_name=item['brand_name'],
-                        name=item['product_name'],
-                        ended_at=datetime.strptime(item['ended_at'], '%Y/%m/%d').date(),
-                        rank=item['data_rank'],
-                        price=item['price'],
-                        current_bidding_price=item['current_bidding_price'],
-                        memo=item['memo']
-                    )
+                    if (item['brand_name'], item['product_name']) not in existing_products:
+                        image_content, image_name = item['image']
+                        Product.objects.create(
+                            auction=auction,
+                            image=ContentFile(image_content, name=image_name) if image_content else None,
+                            brand_name=item['brand_name'],
+                            name=item['product_name'],
+                            ended_at=datetime.strptime(item['ended_at'], '%Y/%m/%d').date(),
+                            rank=item['data_rank'],
+                            price=item['price'],
+                            current_bidding_price=item['current_bidding_price'],
+                            memo=item['memo']
+                        )
                 return redirect('star_buyers_auction:index')
             else:
                 return render(request, "star_buyers_auction/index.html",
