@@ -222,7 +222,7 @@ class SBA:
 
         return price
 
-    def _save_image(self, product_data_string):
+    def _get_image(self, product_data_string):
         """
         Extract image URL, process the image, and return optimized image content.
 
@@ -287,7 +287,7 @@ class SBA:
                 memo = self._get_memo(product_data_string)
                 katakana = self._extract_katakana_from_memo(memo)
                 price = self._convert_katakana_into_price(katakana)
-                image = self._save_image(product_data_string)
+                image = self._get_image(product_data_string)
 
                 product_datum = {
                     "brand_name": brand_name,
