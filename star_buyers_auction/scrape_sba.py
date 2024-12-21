@@ -297,7 +297,8 @@ class SBA:
                     "data_rank": data_rank,
                     "memo": memo,
                     "price": price,
-                    "image": image
+                    "image": image,
+                    "product_link": product_link
                 }
                 product_data.append(product_datum)
 
