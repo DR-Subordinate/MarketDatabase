@@ -35,5 +35,9 @@
         </div>
       </div>
     </section>
+
+    {% if compression_message %}
+      <p class="text-green-600 mt-4 text-xl font-bold">{{ compression_message }}</p>
+    {% endif %}
   </section>
 {% endblock %}
