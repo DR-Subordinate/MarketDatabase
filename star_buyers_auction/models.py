@@ -8,7 +8,7 @@ class Auction(models.Model):
         return f"{self.name} {self.date}"
 
 
-class Product(models.Model):
+class AuctionProduct(models.Model):
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE, blank=True, null=True)
     image = models.ImageField(upload_to='star_buyers_auction/', null=True, blank=True)
     is_image_compressed = models.BooleanField(default=False)

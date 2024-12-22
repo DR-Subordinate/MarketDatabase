@@ -1,13 +1,13 @@
 from django.contrib import admin
 
-from .models import Auction, Product
+from .models import Auction, AuctionProduct
 
-class ProductInline(admin.StackedInline):
-    model = Product
+class AuctionProductInline(admin.StackedInline):
+    model = AuctionProduct
     extra = 1
 
 class AuctionAdmin(admin.ModelAdmin):
-    inlines = [ProductInline]
+    inlines = [AuctionProductInline]
 
 admin.site.register(Auction, AuctionAdmin)
-admin.site.register(Product)
+admin.site.register(AuctionProduct)

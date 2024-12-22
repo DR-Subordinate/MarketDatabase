@@ -3,7 +3,7 @@ from django.core.files.base import ContentFile
 from datetime import datetime
 import os
 from dotenv import load_dotenv
-from .models import Auction, Product
+from .models import Auction, AuctionProduct
 from .scrape_sba import SBA
 from .get_storage_info import get_disk_usage
 from .compress_images import compress_sba_images
@@ -39,7 +39,7 @@ def index(request):
                     name="スタバイ"
                 )
 
-                existing_products = set(Product.objects.values_list('product_link', flat=True))
+                existing_products = set(AuctionProduct.objects.values_list('product_link', flat=True))
 
                 product_links = sba.collect_product_links()
                 product_data = sba.collect_product_data(product_links)
@@ -47,7 +47,7 @@ def index(request):
                 for item in product_data:
                     if item['product_link'] not in existing_products:
                         image_content, image_name = item['image']
-                        Product.objects.create(
+                        AuctionProduct.objects.create(
                             auction=auction,
                             image=ContentFile(image_content, name=image_name) if image_content else None,
                             brand_name=item['brand_name'],

@@ -1,13 +1,13 @@
 import os
 from PIL import Image
-from .models import Product
+from .models import AuctionProduct
 
 def compress_sba_images():
     """
     Reduces file sizes of all uncompressed JPG images,
     starting from the oldest auction date
     """
-    uncompressed_products = Product.objects.filter(
+    uncompressed_products = AuctionProduct.objects.filter(
         is_image_compressed=False,
         image__isnull=False
     ).order_by('auction__date')[:100]
