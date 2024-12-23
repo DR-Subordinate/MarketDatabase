@@ -12,6 +12,8 @@ import os
 from datetime import datetime
 from .generate_invoice_pdf import generate_invoice_pdf
 
+from star_buyers_auction.models import AuctionProduct
+
 def main(request):
     markets = Market.objects.all().order_by("-pk")
     market_form = MarketForm()
@@ -105,7 +107,7 @@ def search(request):
     if request.method == "GET":
         search_query = request.GET.get("search-query")
         if search_query:
-            products = Product.objects.filter(
+            market_products = Product.objects.filter(
                 Q(market__name__icontains=search_query) |
                 Q(market__date__icontains=search_query) |
                 Q(number__icontains=search_query) |
@@ -119,6 +121,25 @@ def search(request):
                 Q(price__icontains=search_query) |
                 Q(winning_bid__icontains=search_query)
             ).exclude(winning_bid__isnull=True).exclude(winning_bid__exact='')
+
+            auction_products = AuctionProduct.objects.filter(
+                Q(auction__name__icontains=search_query) |
+                Q(auction__date__icontains=search_query) |
+                Q(brand_name__icontains=search_query) |
+                Q(name__icontains=search_query) |
+                Q(rank__icontains=search_query) |
+                Q(price__icontains=search_query) |
+                Q(current_bidding_price__icontains=search_query) |
+                Q(memo__icontains=search_query)
+            )
+
+            results = {
+                'market_products': market_products,
+                'auction_products': auction_products
+            }
         else:
-            return render(request, "product_data_form/search.html")
-    return render(request, "product_data_form/search.html", {"products": products})
+            results = None
+
+        return render(request, "product_data_form/search.html", {"results": results})
+
+    return render(request, "product_data_form/search.html")
