@@ -8,49 +8,96 @@
     </fieldset>
   </form>
 
-  {% if products %}
-    <table class="mx-auto border border-black">
-      <thead>
-        <tr class="bg-gray-300">
-          <th class="p-2 border border-black">市場名</th>
-          <th class="p-2 border border-black">日付</th>
-          <th class="p-2 border border-black">画像</th>
-          <th class="p-2 border border-black">番号</th>
-          <th class="p-2 border border-black">ブランド名</th>
-          <th class="p-2 border border-black">商品名</th>
-          <th class="p-2 border border-black">型番</th>
-          <th class="p-2 border border-black">製造番号</th>
-          <th class="p-2 border border-black">素材・カラー</th>
-          <th class="p-2 border border-black">状態</th>
-          <th class="p-2 border border-black cursor-pointer" id="detail_header">↓</th>
-          <th class="p-2 border border-black">値段</th>
-          <th class="p-2 border border-black">落札価格</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for product in products %}
-          <tr>
-            <td class="p-2 border border-black">{{ product.market.name }}</td>
-            <td class="p-2 border border-black">{{ product.market.date }}</td>
-            <td class="p-2 border border-black">
-              {% if product.image %}
-                <img src="{{ product.image.url }}" alt="商品画像" width="100" height="100">
-              {% endif %}
-            </td>
-            <td class="p-2 border border-black">{{ product.number}}</td>
-            <td class="p-2 border border-black">{{ product.brand_name}}</td>
-            <td class="p-2 border border-black">{{ product.name}}</td>
-            <td class="p-2 border border-black">{{ product.model_number}}</td>
-            <td class="p-2 border border-black">{{ product.serial_number}}</td>
-            <td class="p-2 border border-black">{{ product.material_color}}</td>
-            <td class="p-2 border border-black">{{ product.condition}}</td>
-            <td class="p-2 border border-black whitespace-pre-wrap" data-product="detail">{{ product.detail}}</td>
-            <td class="p-2 border border-black">{{ product.price}}</td>
-            <td class="p-2 border border-black">{{ product.winning_bid}}</td>
+  {% if results %}
+    {% if results.market_products %}
+      <p class="text-2xl font-bold mb-4 text-center">市場商品</p>
+      <table class="mx-auto border border-black mb-10">
+        <thead>
+          <tr class="bg-gray-300">
+            <th class="p-2 border border-black">市場名</th>
+            <th class="p-2 border border-black">日付</th>
+            <th class="p-2 border border-black">画像</th>
+            <th class="p-2 border border-black">番号</th>
+            <th class="p-2 border border-black">ブランド名</th>
+            <th class="p-2 border border-black">商品名</th>
+            <th class="p-2 border border-black">型番</th>
+            <th class="p-2 border border-black">製造番号</th>
+            <th class="p-2 border border-black">素材・カラー</th>
+            <th class="p-2 border border-black">状態</th>
+            <th class="p-2 border border-black cursor-pointer" id="detail_header">↓</th>
+            <th class="p-2 border border-black">値段</th>
+            <th class="p-2 border border-black">落札価格</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {% for product in results.market_products %}
+            <tr>
+              <td class="p-2 border border-black">{{ product.market.name }}</td>
+              <td class="p-2 border border-black">{{ product.market.date }}</td>
+              <td class="p-2 border border-black">
+                {% if product.image %}
+                  <img src="{{ product.image.url }}" alt="商品画像" width="100" height="100">
+                {% endif %}
+              </td>
+              <td class="p-2 border border-black">{{ product.number }}</td>
+              <td class="p-2 border border-black">{{ product.brand_name }}</td>
+              <td class="p-2 border border-black">{{ product.name }}</td>
+              <td class="p-2 border border-black">{{ product.model_number }}</td>
+              <td class="p-2 border border-black">{{ product.serial_number }}</td>
+              <td class="p-2 border border-black">{{ product.material_color }}</td>
+              <td class="p-2 border border-black">{{ product.condition }}</td>
+              <td class="p-2 border border-black whitespace-pre-wrap" data-product="detail">{{ product.detail }}</td>
+              <td class="p-2 border border-black">{{ product.price }}</td>
+              <td class="p-2 border border-black">{{ product.winning_bid }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+
+    {% if results.auction_products %}
+      <p class="text-2xl font-bold mb-4 text-center">オークション商品</p>
+      <table class="mx-auto border border-black">
+        <thead>
+          <tr class="bg-gray-300">
+            <th class="p-2 border border-black">オークション名</th>
+            <th class="p-2 border border-black">日付</th>
+            <th class="p-2 border border-black">画像</th>
+            <th class="p-2 border border-black">ブランド名</th>
+            <th class="p-2 border border-black">商品名</th>
+            <th class="p-2 border border-black">終了日時</th>
+            <th class="p-2 border border-black">ランク</th>
+            <th class="p-2 border border-black">価格</th>
+            <th class="p-2 border border-black">現在の入札価格</th>
+            <th class="p-2 border border-black">メモ</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in results.auction_products %}
+            <tr>
+              <td class="p-2 border border-black">{{ product.auction.name }}</td>
+              <td class="p-2 border border-black">{{ product.auction.date }}</td>
+              <td class="p-2 border border-black">
+                {% if product.image %}
+                  <img src="{{ product.image.url }}" alt="商品画像" width="100" height="100">
+                {% endif %}
+              </td>
+              <td class="p-2 border border-black">{{ product.brand_name }}</td>
+              <td class="p-2 border border-black">{{ product.name }}</td>
+              <td class="p-2 border border-black">{{ product.ended_at }}</td>
+              <td class="p-2 border border-black">{{ product.rank }}</td>
+              <td class="p-2 border border-black">{{ product.price }}</td>
+              <td class="p-2 border border-black">{{ product.current_bidding_price }}</td>
+              <td class="p-2 border border-black">{{ product.memo }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+
+    {% if not results.market_products and not results.auction_products %}
+      <p class="text-center text-xl mt-4">検索結果が見つかりませんでした。</p>
+    {% endif %}
   {% endif %}
 
   <script>
