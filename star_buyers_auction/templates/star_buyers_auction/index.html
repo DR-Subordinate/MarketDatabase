@@ -13,7 +13,7 @@
         <div class="p-1">
           <label>
             <span class="font-bold mr-4">日付</span>
-            <input type="date" name="auction_end_date" class="border border-black" required>
+            <input type="date" name="auction_end_date" value="{{ auction_end_date|default:'' }}" class="border border-black" required>
           </label>
         </div>
         <input type="submit" name="save_market" value="商品情報を取得" class="cursor-pointer text-white bg-[#475499] rounded p-1 mt-2 mx-auto">
@@ -39,5 +39,15 @@
     {% if compression_message %}
       <p class="text-green-600 mt-4 text-xl font-bold">{{ compression_message }}</p>
     {% endif %}
+
+    {% if progress_message %}
+      <p class="text-green-600 mb-4"><strong>{{ progress_message }}</strong></p>
+    {% endif %}
   </section>
+
+  {% if continue_processing %}
+    <script>
+      document.querySelector('form').submit();
+    </script>
+  {% endif %}
 {% endblock %}
