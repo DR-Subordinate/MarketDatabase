@@ -58,7 +58,7 @@
                 {{ form.image.errors }} {{ form.image }}
               </td>
               <td class="p-1 border border-black overflow-hidden">
-                {{ form.price.errors }} {{ form.price|attr:"readonly" }}
+                {{ form.price.errors }} {{ form.price|attr:"readonly"|add_class:"bg-gray-100 text-gray-500 cursor-not-allowed" }}
               </td>
               <td class="p-1 border border-black overflow-hidden">
                 {{ form.number.errors }} {{ form.number }}
