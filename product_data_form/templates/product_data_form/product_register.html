@@ -50,6 +50,7 @@
           {% for form in edit_formset %}
             <tr {% if forloop.counter|divisibleby:2 %} class="bg-gray-200" {% endif %}>
               {{ form.id }}
+              {{ form.winning_bid.as_hidden }}
               <td class="p-1 border border-black overflow-hidden">
                 {% if form.instance.image %}
                   <img src="{{ form.instance.image.url }}" alt="商品画像" class="w-14 h-14">
@@ -57,7 +58,7 @@
                 {{ form.image.errors }} {{ form.image }}
               </td>
               <td class="p-1 border border-black overflow-hidden">
-                {{ form.price.errors }} {{ form.price|attr:"disabled" }}
+                {{ form.price.errors }} {{ form.price|attr:"readonly" }}
               </td>
               <td class="p-1 border border-black overflow-hidden">
                 {{ form.number.errors }} {{ form.number }}
