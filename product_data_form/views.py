@@ -77,7 +77,7 @@ def product_register(request, market_name, market_date):
             bidden_products = market.product_set.filter(is_bidden=True)
             generate_invoice_pdf(pdf_buffer, market, bidden_products)
             pdf_buffer.seek(0)
-            current_date = datetime.now().strftime('%Y-%m-%d')
+            current_date = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             market.invoice_pdf.save(f'{current_date}.pdf', ContentFile(pdf_buffer.getvalue()), save=True)
             return redirect("product_data_form:product_register", market_name=market_name, market_date=market_date)
         elif "download_pdf" in request.POST:
