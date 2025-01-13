@@ -5,7 +5,7 @@ from django.forms import modelformset_factory
 from django.core.files.base import ContentFile
 
 from .forms import ProductForm, MarketForm
-from .models import Product, Market
+from .models import Product, Market, InvoicePDF
 
 import io
 import os
@@ -78,12 +78,16 @@ def product_register(request, market_name, market_date):
             generate_invoice_pdf(pdf_buffer, market, bidden_products)
             pdf_buffer.seek(0)
             current_date = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-            market.invoice_pdf.save(f'{current_date}.pdf', ContentFile(pdf_buffer.getvalue()), save=True)
+            InvoicePDF.objects.create(
+                market=market,
+                file=ContentFile(pdf_buffer.getvalue(), name=f'{current_date}.pdf')
+            )
             return redirect("product_data_form:product_register", market_name=market_name, market_date=market_date)
         elif "download_pdf" in request.POST:
-            if market.invoice_pdf:
-                original_filename = os.path.basename(market.invoice_pdf.name)
-                return FileResponse(market.invoice_pdf.open('rb'), filename=original_filename)
+            pdf_id = request.POST.get("pdf_id")
+            if pdf_id:
+                pdf = get_object_or_404(InvoicePDF, id=pdf_id)
+                return FileResponse(pdf.file.open('rb'), filename=os.path.basename(pdf.file.name))
         else:
             edit_formset = ProductFormSetEdit(request.POST, request.FILES, prefix='edit', queryset=Product.objects.filter(market=market).order_by('-is_bidden'))
 
