@@ -27,3 +27,11 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+class InvoicePDF(models.Model):
+    market = models.ForeignKey(Market, on_delete=models.CASCADE)
+    file = models.FileField(upload_to='invoices/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
