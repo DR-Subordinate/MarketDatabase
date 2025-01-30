@@ -26,19 +26,28 @@
 
     <div class="flex flex-col items-center mt-8 w-1/6">
       {% for market in markets %}
-        {% if not market.date|is_older_than_six_months %}
+        {% if not market.date|is_older_than_six_months and market.name and market.date %}
           <div class="flex items-center mb-1">
             <a target="_blank" href="{% url 'product_data_form:product_main' market_name=market.name market_date=market.date %}" class="mb-1 underline text-blue-500 text-center text-[17px]">{{ market.name }} {{ market.date }}</a>
-            {% if market.invoice_pdf %}
-              <form method="post" class="ml-1">
-                {% csrf_token %}
-                <input type="hidden" name="market_id" value="{{ market.id }}">
-                <button type="submit" name="download_pdf" class="text-white bg-green-600 rounded p-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                </button>
-              </form>
+            {% if market.invoicepdf_set.exists %}
+              <div class="flex gap-2 ml-1">
+                {% for pdf in market.invoicepdf_set.all reversed %}
+                  <div class="relative group">
+                    <form method="post">
+                      {% csrf_token %}
+                      <input type="hidden" name="pdf_id" value="{{ pdf.id }}">
+                      <button type="submit" name="download_pdf" class="text-white bg-green-600 rounded p-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                      </button>
+                    </form>
+                    <div class="hidden group-hover:block absolute top-full mt-1 bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                      {{ pdf.created_at|date:"Y-m-d H:i" }}
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
             {% endif %}
           </div>
         {% endif %}
@@ -50,19 +59,28 @@
     </p>
     <div class="flex flex-col items-center mt-1 w-1/6 hidden" id="old_link_list">
       {% for market in markets %}
-        {% if market.date|is_older_than_six_months %}
+        {% if market.date|is_older_than_six_months and market.name and market.date %}
           <div class="flex items-center mb-1">
             <a target="_blank" href="{% url 'product_data_form:product_main' market_name=market.name market_date=market.date %}" class="mb-1 underline text-blue-500 text-center text-[17px]">{{ market.name }} {{ market.date }}</a>
-            {% if market.invoice_pdf %}
-              <form method="post">
-                {% csrf_token %}
-                <input type="hidden" name="market_id" value="{{ market.id }}">
-                <button type="submit" name="download_pdf" class="text-white bg-green-600 rounded p-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                </button>
-              </form>
+            {% if market.invoicepdf_set.exists %}
+              <div class="flex gap-2 ml-1">
+                {% for pdf in market.invoicepdf_set.all reversed %}
+                  <div class="relative group">
+                    <form method="post">
+                      {% csrf_token %}
+                      <input type="hidden" name="pdf_id" value="{{ pdf.id }}">
+                      <button type="submit" name="download_pdf" class="text-white bg-green-600 rounded p-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                      </button>
+                    </form>
+                    <div class="hidden group-hover:block absolute top-full mt-1 bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                      {{ pdf.created_at|date:"Y-m-d H:i" }}
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
             {% endif %}
           </div>
         {% endif %}
