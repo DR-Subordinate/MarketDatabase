@@ -20,11 +20,10 @@ def main(request):
 
     if request.method == "POST":
         if "download_pdf" in request.POST:
-            market_id = request.POST.get('market_id')
-            market = get_object_or_404(Market, id=market_id)
-            if market.invoice_pdf:
-                original_filename = os.path.basename(market.invoice_pdf.name)
-                return FileResponse(market.invoice_pdf.open('rb'), filename=original_filename)
+            pdf_id = request.POST.get('pdf_id')
+            if pdf_id:
+                pdf = get_object_or_404(InvoicePDF, id=pdf_id)
+                return FileResponse(pdf.file.open('rb'), filename=os.path.basename(pdf.file.name))
         else:
             market_form = MarketForm(request.POST)
             if market_form.is_valid():
