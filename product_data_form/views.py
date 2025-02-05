@@ -110,31 +110,41 @@ def search(request):
     if request.method == "GET":
         search_query = request.GET.get("search-query")
         if search_query:
-            market_products = Product.objects.filter(
-                Q(market__name__icontains=search_query) |
-                Q(market__date__icontains=search_query) |
-                Q(number__icontains=search_query) |
-                Q(brand_name__icontains=search_query) |
-                Q(name__icontains=search_query) |
-                Q(model_number__icontains=search_query) |
-                Q(serial_number__icontains=search_query) |
-                Q(material_color__icontains=search_query) |
-                Q(condition__icontains=search_query) |
-                Q(detail__icontains=search_query) |
-                Q(price__icontains=search_query) |
-                Q(winning_bid__icontains=search_query)
-            )
 
-            auction_products = AuctionProduct.objects.filter(
-                Q(auction__name__icontains=search_query) |
-                Q(auction__date__icontains=search_query) |
-                Q(brand_name__icontains=search_query) |
-                Q(name__icontains=search_query) |
-                Q(rank__icontains=search_query) |
-                Q(price__icontains=search_query) |
-                Q(current_bidding_price__icontains=search_query) |
-                Q(memo__icontains=search_query)
-            )
+            search_terms = search_query.replace('\u3000', ' ').split()
+
+            market_products_query = Q()
+            auction_products_query = Q()
+
+            for term in search_terms:
+                market_products_query |= (
+                    Q(market__name__icontains=term) |
+                    Q(market__date__icontains=term) |
+                    Q(number__icontains=term) |
+                    Q(brand_name__icontains=term) |
+                    Q(name__icontains=term) |
+                    Q(model_number__icontains=term) |
+                    Q(serial_number__icontains=term) |
+                    Q(material_color__icontains=term) |
+                    Q(condition__icontains=term) |
+                    Q(detail__icontains=term) |
+                    Q(price__icontains=term) |
+                    Q(winning_bid__icontains=term)
+                )
+
+                auction_products_query |= (
+                    Q(auction__name__icontains=term) |
+                    Q(auction__date__icontains=term) |
+                    Q(brand_name__icontains=term) |
+                    Q(name__icontains=term) |
+                    Q(rank__icontains=term) |
+                    Q(price__icontains=term) |
+                    Q(current_bidding_price__icontains=term) |
+                    Q(memo__icontains=term)
+                )
+
+            market_products = Product.objects.filter(market_products_query)
+            auction_products = AuctionProduct.objects.filter(auction_products_query)
 
             results = {
                 'market_products': market_products,
