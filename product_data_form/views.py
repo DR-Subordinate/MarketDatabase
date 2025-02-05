@@ -123,7 +123,7 @@ def search(request):
                 Q(detail__icontains=search_query) |
                 Q(price__icontains=search_query) |
                 Q(winning_bid__icontains=search_query)
-            ).exclude(winning_bid__isnull=True).exclude(winning_bid__exact='')
+            )
 
             auction_products = AuctionProduct.objects.filter(
                 Q(auction__name__icontains=search_query) |
