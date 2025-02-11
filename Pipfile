@@ -16,5 +16,5 @@ beautifulsoup4 = "*"
 [dev-packages]
 
 [requires]
-python_version = "3.9"
-python_full_version = "3.9.12"
+python_version = "3.13"
+python_full_version = "3.13.2"
