@@ -117,7 +117,7 @@ def search(request):
             auction_products_query = Q()
 
             for term in search_terms:
-                market_products_query |= (
+                market_products_query &= (
                     Q(market__name__icontains=term) |
                     Q(market__date__icontains=term) |
                     Q(number__icontains=term) |
@@ -132,7 +132,7 @@ def search(request):
                     Q(winning_bid__icontains=term)
                 )
 
-                auction_products_query |= (
+                auction_products_query &= (
                     Q(auction__name__icontains=term) |
                     Q(auction__date__icontains=term) |
                     Q(brand_name__icontains=term) |
