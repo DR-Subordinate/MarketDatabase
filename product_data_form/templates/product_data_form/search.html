@@ -9,7 +9,7 @@
   </form>
 
   {% if results %}
-    {% if results.market_products or results.auction_products %}
+    {% if results.combined_products %}
       <table class="mx-auto border border-black">
         <thead>
           <tr class="bg-gray-300">
@@ -28,10 +28,22 @@
           </tr>
         </thead>
         <tbody>
-          {% for product in results.market_products %}
+          {% for product in results.combined_products %}
             <tr>
-              <td class="p-2 border border-black">{{ product.market.name }}</td>
-              <td class="p-2 border border-black">{{ product.market.date }}</td>
+              <td class="p-2 border border-black">
+                {% if product.market %}
+                  {{ product.market.name }}
+                {% else %}
+                  {{ product.auction.name }}
+                {% endif %}
+              </td>
+              <td class="p-2 border border-black">
+                {% if product.market %}
+                  {{ product.market.date }}
+                {% else %}
+                  {{ product.auction.date }}
+                {% endif %}
+              </td>
               <td class="p-2 border border-black">
                 {% if product.image %}
                   <img src="{{ product.image.url }}" alt="商品画像" width="100" height="100">
@@ -39,41 +51,50 @@
               </td>
               <td class="p-2 border border-black">{{ product.brand_name }}</td>
               <td class="p-2 border border-black">{{ product.name }}</td>
-              <td class="p-2 border border-black">{{ product.model_number }}</td>
-              <td class="p-2 border border-black">{{ product.serial_number }}</td>
-              <td class="p-2 border border-black">{{ product.material_color }}</td>
-              <td class="p-2 border border-black">{{ product.condition }}</td>
-              <td class="p-2 border border-black">{{ product.price }}</td>
-              <td class="p-2 border border-black">{{ product.winning_bid }}</td>
-              <td class="p-2 border border-black">{{ product.detail }}</td>
-            </tr>
-          {% endfor %}
-
-          {% for product in results.auction_products %}
-            <tr>
-              <td class="p-2 border border-black">{{ product.auction.name }}</td>
-              <td class="p-2 border border-black">{{ product.auction.date }}</td>
               <td class="p-2 border border-black">
-                {% if product.image %}
-                  <img src="{{ product.image.url }}" alt="商品画像" width="100" height="100">
+                {% if product.market %}
+                  {{ product.model_number }}
                 {% endif %}
               </td>
-              <td class="p-2 border border-black">{{ product.brand_name }}</td>
-              <td class="p-2 border border-black">{{ product.name }}</td>
-              <td class="p-2 border border-black"></td>
-              <td class="p-2 border border-black"></td>
-              <td class="p-2 border border-black"></td>
-              <td class="p-2 border border-black">{{ product.rank }}</td>
+              <td class="p-2 border border-black">
+                {% if product.market %}
+                  {{ product.serial_number }}
+                {% endif %}
+              </td>
+              <td class="p-2 border border-black">
+                {% if product.market %}
+                  {{ product.material_color }}
+                {% endif %}
+              </td>
+              <td class="p-2 border border-black">
+                {% if product.market %}
+                  {{ product.condition }}
+                {% else %}
+                  {{ product.rank }}
+                {% endif %}
+              </td>
               <td class="p-2 border border-black">{{ product.price }}</td>
-              <td class="p-2 border border-black">{{ product.current_bidding_price }}</td>
-              <td class="p-2 border border-black">{{ product.memo }}</td>
+              <td class="p-2 border border-black">
+                {% if product.market %}
+                  {{ product.winning_bid }}
+                {% else %}
+                  {{ product.current_bidding_price }}
+                {% endif %}
+              </td>
+              <td class="p-2 border border-black">
+                {% if product.market %}
+                  {{ product.detail }}
+                {% else %}
+                  {{ product.memo }}
+                {% endif %}
+              </td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
     {% endif %}
 
-    {% if not results.market_products and not results.auction_products %}
+    {% if not results.combined_products %}
       <p class="text-center text-xl mt-4">検索結果が見つかりませんでした。</p>
     {% endif %}
   {% endif %}
