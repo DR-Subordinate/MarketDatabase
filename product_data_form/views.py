@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import FileResponse
-from django.db.models import Q
+from django.db.models import Q, F
 from django.forms import modelformset_factory
 from django.core.files.base import ContentFile
 
@@ -10,6 +10,7 @@ from .models import Product, Market, InvoicePDF
 import io
 import os
 from datetime import datetime
+from itertools import chain
 from .generate_invoice_pdf import generate_invoice_pdf
 
 from star_buyers_auction.models import AuctionProduct
@@ -143,12 +144,22 @@ def search(request):
                     Q(memo__icontains=term)
                 )
 
-            market_products = Product.objects.filter(market_products_query)
-            auction_products = AuctionProduct.objects.filter(auction_products_query)
+            market_products = Product.objects.filter(market_products_query).annotate(
+                sort_date=F('market__date')
+            )
+
+            auction_products = AuctionProduct.objects.filter(auction_products_query).annotate(
+                sort_date=F('auction__date')
+            )
+
+            combined_products = sorted(
+                chain(market_products, auction_products),
+                key=lambda x: x.sort_date,
+                reverse=True
+            )
 
             results = {
-                'market_products': market_products,
-                'auction_products': auction_products
+                'combined_products': combined_products
             }
         else:
             results = None
