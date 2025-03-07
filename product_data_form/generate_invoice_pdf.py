@@ -112,9 +112,6 @@ def create_table_style():
 
         # Grid lines for the entire table
         ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
-
-        # Vertical alignment for the entire table
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
     ])
 
 
