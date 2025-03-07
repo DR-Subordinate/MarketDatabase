@@ -77,13 +77,12 @@ def draw_total_amount(page, total_amount, tax):
 
 
 def create_table_data(bidden_products):
-    data = [['ブランド名', '商品名', '数量', '単価', '金額']]
+    data = [['ブランド名', '商品名', '数量', '金額']]
     for product in bidden_products:
         data.append([
             product.brand_name,
             f"{product.name} {product.model_number}",
             '1',
-            product.price,
             product.price
         ])
     return data
@@ -101,7 +100,7 @@ def create_table_style():
         
         # Content alignment
         ('ALIGN', (0, 1), (1, -1), 'LEFT'),  # Left align for ブランド名 and 商品名 content
-        ('ALIGN', (2, 1), (-1, -1), 'RIGHT'),  # Right align for 数量, 単価, and 金額 content
+        ('ALIGN', (2, 1), (-1, -1), 'RIGHT'),  # Right align for 数量 and 金額 content
         
         # Font and size for content
         ('FONTNAME', (0, 1), (-1, -1), 'NotoSerifJP-Bold'),
@@ -118,7 +117,7 @@ def create_table_style():
 
 
 def draw_table(page, data, style):
-    table = Table(data, colWidths=[1.3*inch, 3.5*inch, 0.5*inch, 1*inch, 1*inch])
+    table = Table(data, colWidths=[1.3*inch, 4.2*inch, 0.5*inch, 1.3*inch])
     table.setStyle(style)
 
     _, table_height = table.wrapOn(page, 7.3*inch, 9*inch) # Adjust width as needed
