@@ -83,7 +83,7 @@ def create_table_data(bidden_products):
     for product in bidden_products:
         data.append([
             product.brand_name,
-            f"{product.name} {product.model_number}",
+            f"{product.name}　{product.material_color}　{product.model_number}　{product.serial_number}",
             '1',
             product.price
         ])
