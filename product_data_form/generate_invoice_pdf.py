@@ -77,7 +77,9 @@ def draw_total_amount(page, total_amount, tax):
 
 
 def create_table_data(bidden_products):
-    data = [['ブランド名', '商品名', '数量', '金額']]
+    # Add a newline before the header text to push it down visually
+    data = [['\nブランド名', '\n商品名', '\n数量', '\n金額']]
+
     for product in bidden_products:
         data.append([
             product.brand_name,
