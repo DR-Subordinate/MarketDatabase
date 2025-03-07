@@ -97,20 +97,20 @@ def create_table_style():
         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
         ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
-        
+
         # Content alignment
         ('ALIGN', (0, 1), (1, -1), 'LEFT'),  # Left align for ブランド名 and 商品名 content
         ('ALIGN', (2, 1), (-1, -1), 'RIGHT'),  # Right align for 数量 and 金額 content
-        
+
         # Font and size for content
         ('FONTNAME', (0, 1), (-1, -1), 'NotoSerifJP-Bold'),
         ('FONTSIZE', (0, 1), (-1, -1), 8),
         ('TOPPADDING', (0, 1), (-1, -1), 3),
         ('BOTTOMPADDING', (0, 1), (-1, -1), 3),
-        
+
         # Grid lines for the entire table
         ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
-        
+
         # Vertical alignment for the entire table
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
     ])
