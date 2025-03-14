@@ -9,14 +9,10 @@
       {% if error_message %}
         <p class="text-red-500 mb-4"><strong>{{ error_message }}</strong></p>
       {% endif %}
-      <fieldset class="flex flex-col border">
+      <fieldset class="flex flex-col">
         <div class="p-1">
-          <label>
-            <span class="font-bold mr-4">日付</span>
-            <input type="date" name="auction_end_date" value="{{ auction_end_date|default:'' }}" class="border border-black" required>
-          </label>
+          <input type="submit" name="save_market" value="商品情報を取得" class="cursor-pointer text-white bg-[#475499] rounded p-1 mt-2 mx-auto">
         </div>
-        <input type="submit" name="save_market" value="商品情報を取得" class="cursor-pointer text-white bg-[#475499] rounded p-1 mt-2 mx-auto">
       </fieldset>
     </form>
 
