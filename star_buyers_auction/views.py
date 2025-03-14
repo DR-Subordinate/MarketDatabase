@@ -19,7 +19,15 @@ def index(request):
         compression_message = "空き容量を確保するため、画像を圧縮しました。"
 
     if request.method == "POST":
-        end_date = request.POST.get('auction_end_date')
+        # Check if we already have a date in the session (for continued processing)
+        if 'auction_end_date' in request.session:
+            end_date = request.session['auction_end_date']
+        else:
+            # Use today's date if this is the first request
+            today = datetime.now().strftime('%Y-%m-%d')
+            end_date = today
+            # Store the date in the session for subsequent requests
+            request.session['auction_end_date'] = end_date
 
         try:
             if not load_dotenv(dotenv_path=".env.local"):
@@ -44,7 +52,6 @@ def index(request):
                     product_links = sba.collect_product_links()
                     request.session['product_links'] = product_links
                     request.session['processing_index'] = 0
-                    end_date = end_date
                 else:
                     auction = Auction.objects.filter(
                         date=datetime.strptime(end_date, '%Y-%m-%d').date()
