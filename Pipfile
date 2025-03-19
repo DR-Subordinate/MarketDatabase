@@ -12,6 +12,7 @@ django-cleanup = "*"
 reportlab = "*"
 requests = "*"
 beautifulsoup4 = "*"
+jaconv = "*"
 
 [dev-packages]
 
