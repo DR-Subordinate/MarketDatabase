@@ -1,4 +1,5 @@
 from django.db import models
+from .text_normalization import TextNormalizationMixin
 
 class Market(models.Model):
     date = models.DateField()
@@ -9,7 +10,7 @@ class Market(models.Model):
         return f"{self.name} {self.date}"
 
 
-class Product(models.Model):
+class Product(TextNormalizationMixin, models.Model):
     market = models.ForeignKey(Market, on_delete=models.CASCADE, blank=True, null=True)
     image = models.ImageField(upload_to='images/', null=True, blank=True)
     number = models.CharField(max_length=200, blank=True)
