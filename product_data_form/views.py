@@ -62,67 +62,60 @@ def product_main(request, market_name, market_date):
     else:
         new_formset = ProductFormSetNew(queryset=Product.objects.none(), prefix='new')
 
-        products_with_price = Product.objects.filter(
-            market=market,
-            price__isnull=False
-        ).exclude(price='')
+        all_products = Product.objects.filter(market=market)
+        products_without_prices_count = all_products.filter(
+            Q(price__isnull=True) | Q(price='')
+        ).count()
 
-        products_without_price = Product.objects.filter(
-            market=market,
-            price__isnull=True
-        ).union(
-            Product.objects.filter(market=market, price='')
-        )
+        if products_without_prices_count == 0 and all_products.exists():
+            # Custom sort
+            def sort_product_numbers(queryset):
+                # Convert to list so we can sort
+                products = list(queryset)
 
-        # Custom sort
-        def sort_product_numbers(queryset):
-            # Convert to list so we can sort
-            products = list(queryset)
-
-            def get_sort_key(product):
-                # Handle the case where number might be None
-                if not product.number:
-                    return (0, 0)
-
-                # Split by hyphen if it exists
-                if '-' in product.number:
-                    parts = product.number.split('-', 1)
-                    try:
-                        return (int(parts[0]), int(parts[1]))
-                    except ValueError:
-                        # If conversion fails, fall back to string comparison
-                        return (0, 0)
-                else:
-                    # If no hyphen, just use the number
-                    try:
-                        return (int(product.number), 0)
-                    except ValueError:
+                def get_sort_key(product):
+                    # Handle the case where number might be None
+                    if not product.number:
                         return (0, 0)
 
-            # Sort the products
-            products.sort(key=get_sort_key)
-            return products
+                    # Split by hyphen if it exists
+                    if '-' in product.number:
+                        parts = product.number.split('-', 1)
+                        try:
+                            return (int(parts[0]), int(parts[1]))
+                        except ValueError:
+                            # If conversion fails, fall back to string comparison
+                            return (0, 0)
+                    else:
+                        # If no hyphen, just use the number
+                        try:
+                            return (int(product.number), 0)
+                        except ValueError:
+                            return (0, 0)
 
-        sorted_with_price = sort_product_numbers(products_with_price)
-        sorted_without_price = sort_product_numbers(products_without_price)
+                # Sort the products
+                products.sort(key=get_sort_key)
+                return products
 
-        all_products = sorted_with_price + sorted_without_price
+            sorted_products = sort_product_numbers(all_products)
 
-        # Create a list of IDs in the order we want
-        ordered_ids = [p.id for p in all_products]
+            # Create a list of IDs in the order we want
+            ordered_ids = [p.id for p in sorted_products]
 
-        # If ordered_ids is empty, use an empty queryset
-        if not ordered_ids:
-            queryset = Product.objects.none()
+            if not ordered_ids:
+                queryset = Product.objects.none()
+            else:
+                # Create a Case expression for ordering
+                preserved = Case(
+                    *[When(id=id, then=Value(i)) for i, id in enumerate(ordered_ids)],
+                    output_field=IntegerField()
+                )
+
+                # Get the queryset in our custom order
+                queryset = Product.objects.filter(id__in=ordered_ids).order_by(preserved)
         else:
-            # Create a Case expression for ordering
-            preserved = Case(
-                *[When(id=id, then=Value(i)) for i, id in enumerate(ordered_ids)],
-                output_field=IntegerField()
-            )
-
-            # Get the queryset in our custom order
-            queryset = Product.objects.filter(id__in=ordered_ids).order_by(preserved)
+            # If any products don't have prices, use the original ordering
+            queryset = all_products.order_by('-is_bidden')
 
         edit_formset = ProductFormSetEdit(queryset=queryset, prefix='edit')
 
