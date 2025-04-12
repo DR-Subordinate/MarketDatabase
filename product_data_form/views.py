@@ -170,6 +170,9 @@ def product_register(request, market_name, market_date):
         ).count()
 
         if products_without_prices_count == 0 and all_products.exists():
+            bidden_products = all_products.filter(is_bidden=True)
+            non_bidden_products = all_products.filter(is_bidden=False)
+
             # Custom sort
             def sort_product_numbers(queryset):
                 # Convert to list so we can sort
@@ -199,10 +202,13 @@ def product_register(request, market_name, market_date):
                 products.sort(key=get_sort_key)
                 return products
 
-            sorted_products = sort_product_numbers(all_products)
+            sorted_bidden = sort_product_numbers(bidden_products)
+            sorted_non_bidden = sort_product_numbers(non_bidden_products)
+
+            all_sorted_products = sorted_bidden + sorted_non_bidden
 
             # Create a list of IDs in the order we want
-            ordered_ids = [p.id for p in sorted_products]
+            ordered_ids = [p.id for p in all_sorted_products]
 
             if not ordered_ids:
                 queryset = Product.objects.none()
