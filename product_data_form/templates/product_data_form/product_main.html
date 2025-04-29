@@ -5,12 +5,14 @@
 {% block content %}
   <section>
     <h1 class="text-3xl text-center font-bold my-2">
-      <form method="post" class="mr-4 inline-block">
-        {% csrf_token %}
-        <input type="hidden" name="fetch_market_data" value="true">
-        <input type="submit" value="相場データ取得" class="align-top text-xs px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer">
-      </form>
-      {{ market.name}} {{ market.date}}
+      {% if "ギャラリーレア" in market.name %}
+        <form method="post" class="mr-4 inline-block">
+          {% csrf_token %}
+          <input type="hidden" name="fetch_market_data" value="true">
+          <input type="submit" value="相場データ取得" class="align-top text-xs px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer">
+        </form>
+      {% endif %}
+      {{ market.name }} {{ market.date }}
       <a target="_blank" href="{% url 'product_data_form:product_register' market_name=market.name market_date=market.date %}" class="underline text-blue-500">register</a>
     </h1>
     <form method="post" id="product_form" enctype="multipart/form-data">
