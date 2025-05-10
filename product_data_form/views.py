@@ -3,15 +3,18 @@ from django.http import FileResponse
 from django.db.models import Q, F, Case, When, Value, IntegerField
 from django.forms import modelformset_factory
 from django.core.files.base import ContentFile
+from django.core.files import File
 
 from .forms import ProductForm, MarketForm
 from .models import Product, Market, InvoicePDF
 
 import io
 import os
+from dotenv import load_dotenv
 from datetime import datetime
 from itertools import chain
 from .generate_invoice_pdf import generate_invoice_pdf
+from .scrape_nbaa import NBAA
 
 from star_buyers_auction.models import AuctionProduct
 
@@ -39,6 +42,70 @@ def product_main(request, market_name, market_date):
 
     ProductFormSetNew = modelformset_factory(Product, form=ProductForm, extra=200)
     ProductFormSetEdit = modelformset_factory(Product, form=ProductForm, extra=0, can_delete=True)
+
+    if request.method == "POST" and request.POST.get("fetch_market_data") == "true":
+        if not load_dotenv(dotenv_path=".env.local"):
+            email = os.environ["EMAIL"]
+            password = os.environ["PASSWORD"]
+        else:
+            email = os.environ["EMAIL"]
+            password = os.environ["PASSWORD"]
+
+        if email and password:
+            nbaa = NBAA(email=email, password=password)
+
+            if nbaa.login():
+                products_to_update = Product.objects.filter(
+                    market=market,
+                    number__isnull=False,
+                )
+
+                if products_to_update.exists():
+                    dates = [market_date] * products_to_update.count()
+                    box_numbers = []
+                    branch_numbers = []
+
+                    for product in products_to_update:
+                        # Assuming product.number format is like "160-3"
+                        if "-" in product.number:
+                            box, branch = product.number.split("-", 1)
+                            box_numbers.append(box.strip())
+                            branch_numbers.append(branch.strip())
+                        else:
+                            # Handle products without proper number format
+                            continue
+
+                    # Collect data from NBAA
+                    if box_numbers and branch_numbers:
+                        scraped_data = nbaa.collect_product_data(dates, box_numbers, branch_numbers)
+                        print(scraped_data)
+
+                        # Update products with scraped data
+                        for i, product in enumerate(products_to_update):
+                            if i < len(scraped_data):
+                                data = scraped_data[i]
+                                print(data)
+
+                                if data["winning_bid"]:
+                                    product.winning_bid = data["winning_bid"]
+
+                                if data["image_path"]:
+                                    if os.path.exists(data["image_path"]):
+                                        with open(data["image_path"], "rb") as img_file:
+                                            product.image.save(
+                                                os.path.basename(data["image_path"]),
+                                                File(img_file),
+                                                save=False
+                                            )
+
+                                product.save()
+
+                        # Clean up temporary image files
+                        for data in scraped_data:
+                            if data["image_path"] and os.path.exists(data["image_path"]):
+                                os.remove(data["image_path"])
+
+        return redirect("product_data_form:product_main", market_name=market_name, market_date=market_date)
 
     if request.method == "POST":
         new_formset = ProductFormSetNew(request.POST, request.FILES, prefix='new', queryset=Product.objects.none())
