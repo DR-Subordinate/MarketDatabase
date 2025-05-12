@@ -45,11 +45,11 @@ def product_main(request, market_name, market_date):
 
     if request.method == "POST" and request.POST.get("fetch_market_data") == "true":
         if not load_dotenv(dotenv_path=".env.local"):
-            email = os.environ["EMAIL"]
-            password = os.environ["PASSWORD"]
+            email = os.environ["EMAIL_NBAA"]
+            password = os.environ["PASSWORD_NBAA"]
         else:
-            email = os.environ["EMAIL"]
-            password = os.environ["PASSWORD"]
+            email = os.environ["EMAIL_NBAA"]
+            password = os.environ["PASSWORD_NBAA"]
 
         if email and password:
             nbaa = NBAA(email=email, password=password)
