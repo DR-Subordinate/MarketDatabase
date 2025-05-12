@@ -52,6 +52,8 @@ jobs:
             DATABASE_NAME_UNITTEST=${{ secrets.DATABASE_NAME_UNITTEST }}
             EMAIL=${{ secrets.EMAIL }}
             PASSWORD=${{secrets.PASSWORD }}
+            EMAIL_NBAA=${{ secrets.EMAIL_NBAA }}
+            PASSWORD_NBAA=${{ secrets.PASSWORD_NBAA }}
             EOF
 
             # 仮想環境を作成
