@@ -121,7 +121,7 @@ class SBA:
         Returns:
             str: End date in format 'MM/DD/YY', excluding time component
         """
-        ended_at_pattern = r"ended_at: '(\d+/\d+/\d+) \d+:\d+'"
+        ended_at_pattern = r"end_at: '(\d+/\d+/\d+) \d+:\d+'"
         ended_at_match = re.search(ended_at_pattern, product_data_string)
         ended_at = ended_at_match.group(1)
         return ended_at
