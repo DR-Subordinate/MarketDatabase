@@ -309,7 +309,8 @@ def main():
     dotenv.load_dotenv(dotenv_path=".env.local")
     EMAIL = os.environ["EMAIL"]
     PASSWORD = os.environ["PASSWORD"]
-    sba = SBA(email=EMAIL, password=PASSWORD, end_date="2024-12-14")
+    # Change end_date accordingly if you want to test the script stand-alone.
+    sba = SBA(email=EMAIL, password=PASSWORD, end_date="2025-05-17")
 
     if sba.login():
         product_links = sba.collect_product_links()
