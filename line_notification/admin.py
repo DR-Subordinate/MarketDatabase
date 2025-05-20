@@ -3,4 +3,5 @@ from .models import LineUser
 
 @admin.register(LineUser)
 class LineUserAdmin(admin.ModelAdmin):
-    list_display = ['user', 'line_user_id', 'is_active']
+    list_display = ['line_user_id', 'name']
+    search_fields = ['line_user_id', 'name']
