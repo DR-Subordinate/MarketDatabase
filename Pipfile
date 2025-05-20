@@ -13,6 +13,7 @@ reportlab = "*"
 requests = "*"
 beautifulsoup4 = "*"
 jaconv = "*"
+line-bot-sdk = "*"
 
 [dev-packages]
 
