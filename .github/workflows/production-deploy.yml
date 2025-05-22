@@ -53,6 +53,7 @@ jobs:
             PASSWORD=${{secrets.PASSWORD }}
             EMAIL_NBAA=${{ secrets.EMAIL_NBAA }}
             PASSWORD_NBAA=${{ secrets.PASSWORD_NBAA }}
+            LINE_CHANNEL_ACCESS_TOKEN=${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
             EOF
 
             # 仮想環境を作成
