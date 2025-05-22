@@ -18,6 +18,8 @@ from .scrape_nbaa import NBAA
 
 from star_buyers_auction.models import AuctionProduct
 
+from line_notification.messaging_service import LineMessagingService
+
 def main(request):
     markets = Market.objects.all().order_by("-pk")
     market_form = MarketForm()
@@ -211,6 +213,13 @@ def product_register(request, market_name, market_date):
                 market=market,
                 file=ContentFile(pdf_buffer.getvalue(), name=f'{current_date}.pdf')
             )
+
+            try:
+                service = LineMessagingService()
+                service.send_to_all(f"請求書が作成されました。{market.name} {market.date}")
+            except Exception as e:
+                print(f"LINE notification error: {e}")
+
             return redirect("product_data_form:product_register", market_name=market_name, market_date=market_date)
         elif "download_pdf" in request.POST:
             pdf_id = request.POST.get("pdf_id")
