@@ -135,7 +135,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
-if not load_dotenv(dotenv_path=".env.local"):
-    LINE_CHANNEL_ACCESS_TOKEN = os.environ["LINE_CHANNEL_ACCESS_TOKEN"]
-else:
-    LINE_CHANNEL_ACCESS_TOKEN = os.environ["LINE_CHANNEL_ACCESS_TOKEN"]
+# Try .env.local first (local), then .env (production)
+load_dotenv(dotenv_path=".env.local")  # This will fail silently if file doesn't exist
+load_dotenv(dotenv_path=".env")        # This will load .env if it exists
+
+# access the environment variable
+LINE_CHANNEL_ACCESS_TOKEN = os.environ["LINE_CHANNEL_ACCESS_TOKEN"]
