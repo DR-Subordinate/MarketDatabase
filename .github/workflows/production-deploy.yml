@@ -14,6 +14,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3.5.3
 
+      # フロントエンドの準備
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Build frontend assets
+        run: |
+          npm install
+          npm run build
+
       # FTP 経由でファイルをサーバへ転送する
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -27,6 +38,8 @@ jobs:
             .editorconfig
             .gitignore
             .env.local
+            node_modules/
+            src/
 
       # SSH 経由でコマンドを実行する
       - name: SSH Remote Commands
