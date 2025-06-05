@@ -13,7 +13,7 @@ export default defineConfig({
         product_data_form: resolve(__dirname, 'product_data_form/static/src/main.ts'),
       },
       output: {
-        dir: 'static',
+        dir: 'dist',
         entryFileNames: `js/[name].js`,
         assetFileNames: 'css/main.css',
       }
