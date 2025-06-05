@@ -8,4 +8,4 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["test-marketdb.across-shop.com"]
 
-STATIC_ROOT = BASE_DIR / "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"

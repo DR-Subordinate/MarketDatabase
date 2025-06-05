@@ -8,7 +8,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ["marketdb.across-shop.com"]
 
-STATIC_ROOT = BASE_DIR / "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
