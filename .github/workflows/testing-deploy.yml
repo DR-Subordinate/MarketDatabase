@@ -40,7 +40,6 @@ jobs:
             .env.local
             **/node_modules/
             **/node_modules/**
-            src/
 
       # SSH 経由でコマンドを実行する
       - name: SSH Remote Commands
