@@ -8,6 +8,9 @@ DEBUG = False
 
 ALLOWED_HOSTS = ["marketdb.across-shop.com"]
 
+# Override to use absolute URL that bypasses CGI
+STATIC_URL = 'https://marketdb.across-shop.com/static/'
+
 STATIC_ROOT = BASE_DIR / "static"
 
 SECURE_HSTS_SECONDS = 31536000
