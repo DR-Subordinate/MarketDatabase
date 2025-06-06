@@ -11,4 +11,4 @@ ALLOWED_HOSTS = ["test-marketdb.across-shop.com"]
 # Override to use absolute URL that bypasses CGI
 STATIC_URL = 'https://test-marketdb.across-shop.com/static/'
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR / "static"
