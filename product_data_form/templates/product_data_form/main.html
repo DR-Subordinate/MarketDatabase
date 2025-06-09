@@ -1,6 +1,7 @@
 {% extends "product_data_form/base.html" %}
 
 {% load check_market_age %}
+{% load static %}
 
 {% block content %}
   <section class="flex flex-col items-center my-8">
@@ -88,13 +89,5 @@
     </div>
   </section>
 
-  <script>
-    const seeMoreText = document.getElementById("see_more");
-    const seeMoreIcon = document.querySelector("#see_more > .text-blue-500");
-    const oldLinkList = document.getElementById("old_link_list")
-    seeMoreText.addEventListener("click", () => {
-      const isHidden = oldLinkList.classList.toggle("hidden");
-      seeMoreIcon.textContent = isHidden ? "+" : "−";
-    });
-  </script>
+  <script src="{% static 'js/product_data_form.js' %}"></script>
 {% endblock %}
