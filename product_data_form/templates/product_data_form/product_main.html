@@ -1,6 +1,7 @@
 {% extends "product_data_form/base.html" %}
 
 {% load widget_tweaks %}
+{% load static %}
 
 {% block content %}
   <section>
@@ -111,105 +112,5 @@
     </form>
   </section>
 
-  <script>
-    const productForm = document.getElementById("product_form");
-    productForm.addEventListener("keydown", e => {
-      if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
-        e.preventDefault();
-      }
-    });
-
-    document.addEventListener("keydown", e => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
-        e.preventDefault();
-        productForm.submit();
-      }
-    });
-
-    const deleteButtons = document.querySelectorAll('[type="button"]');
-    for (const deleteButton of deleteButtons) {
-      deleteButton.addEventListener("click", () => {
-        const deleteCheckbox = deleteButton.closest(".text-center").querySelector('[name$="DELETE"]');
-
-        Swal.fire({
-          text: "本当にこの商品を削除しますか？",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "rgb(220, 38, 38)",
-          cancelButtonColor: "rgb(37, 99, 235)",
-          confirmButtonText: "削除",
-          cancelButtonText: "キャンセル"
-        }).then(result => {
-          if (result.isConfirmed) {
-            deleteCheckbox.checked = true;
-            productForm.submit();
-          }
-        });
-      });
-    }
-
-    const saveProductHeader = document.getElementById("save_product_header");
-    const saveProductHeaderText = document.querySelector("#save_product_header > .text-blue-500");
-    const saveProductTable = document.getElementById("save_product_container")
-    saveProductHeader.addEventListener("click", () => {
-      const isHidden = saveProductTable.classList.toggle("hidden");
-      saveProductHeaderText.textContent = isHidden ? "+" : "−";
-    });
-
-    const priceInputs = document.querySelectorAll('input[name$="price"], input[name$="winning_bid"]');
-    for (const priceInput of priceInputs) {
-      priceInput.addEventListener('blur', e => {
-        const value = e.target.value;
-        if (value) {
-          const formattedValue = Number(value.replace(/,/g, '')).toLocaleString();
-          e.target.value = formattedValue;
-        }
-      });
-    }
-
-    const brandMappings = {
-      'え': 'エルメス',
-      'しゃ': 'シャネル',
-      'べ': 'ベルルッティ',
-      'せ': 'セリーヌ',
-    };
-    const brandInputs = document.querySelectorAll('input[name$="brand_name"]');
-    for (const brandInput of brandInputs) {
-      brandInput.addEventListener('input', e => {
-        const value = e.target.value;
-        if (value && brandMappings[value]) {
-          e.target.value = brandMappings[value];
-        }
-      });
-    }
-
-    const productNameMappings = {
-      'ぴこ': 'ピコタンロック',
-      'がー': 'ガーデンパーティ',
-      'じっぴ': 'ジッピーウォレット',
-      'みゅ': 'ミュルティクレ',
-    };
-    const productNameInputs = document.querySelectorAll('input[name$="-name"]');
-    for (const productNameInput of productNameInputs) {
-      productNameInput.addEventListener('input', e => {
-        const value = e.target.value;
-        if (value && productNameMappings[value]) {
-          e.target.value = productNameMappings[value];
-        }
-      });
-    }
-
-    const materialColorMappings = {
-      'とり': 'トリヨンクレマンス',
-    };
-    const materialColorInputs = document.querySelectorAll('input[name$="material_color"]');
-    for (const materialColorInput of materialColorInputs) {
-      materialColorInput.addEventListener('input', e => {
-        const value = e.target.value;
-        if (value && materialColorMappings[value]) {
-          e.target.value = materialColorMappings[value];
-        }
-      });
-    }
-  </script>
+  <script src="{% static 'js/product_data_form.js' %}"></script>
 {% endblock %}
