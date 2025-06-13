@@ -2,6 +2,7 @@
 
 {% load widget_tweaks %}
 {% load static %}
+{% load add_title %}
 
 {% block content %}
   <section>
@@ -72,10 +73,10 @@
                 {{ form.brand_name.errors }} {{ form.brand_name }}
               </td>
               <td class="p-1 border border-black overflow-hidden">
-                {{ form.name.errors }} {{ form.name }}
+                {{ form.name.errors }} {{ form.name|add_value_as_title }}
               </td>
               <td class="p-1 border border-black overflow-hidden">
-                {{ form.material_color.errors }} {{ form.material_color }}
+                {{ form.material_color.errors }} {{ form.material_color|add_value_as_title }}
               </td>
               <td class="p-1 border border-black overflow-hidden">
                 {{ form.serial_number.errors }} {{ form.serial_number }}
