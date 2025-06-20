@@ -5,25 +5,38 @@
 
 {% block content %}
   <section class="flex flex-col items-center my-8">
-    <form method="post" class="w-1/6">
-      {% csrf_token %}
-      {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-      <fieldset class="flex flex-col border">
-        <div class="p-1">
-          <label>
-            <span class="font-bold mr-4">日付</span>
-            {{ market_form.date.errors }} {{ market_form.date }}
-          </label>
-        </div>
-        <div class="p-1">
-          <label>
-            <span class="font-bold">市場名</span>
-            {{ market_form.name.errors }} {{ market_form.name }}
-          </label>
-        </div>
-        <input type="submit" name="save_market" value="市場を保存" class="cursor-pointer text-white bg-green-600 rounded p-1 mt-1 mx-auto">
-      </fieldset>
-    </form>
+    <div class="flex w-full justify-center ml-129">
+      <form method="post" class="w-1/6 mr-40">
+        {% csrf_token %}
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        <fieldset class="flex flex-col border">
+          <div class="p-1">
+            <label>
+              <span class="font-bold mr-4">日付</span>
+              {{ market_form.date.errors }} {{ market_form.date }}
+            </label>
+          </div>
+          <div class="p-1">
+            <label>
+              <span class="font-bold">市場名</span>
+              {{ market_form.name.errors }} {{ market_form.name }}
+            </label>
+          </div>
+          <input type="submit" name="save_market" value="市場を保存" class="cursor-pointer text-white bg-green-600 rounded p-1 mt-1 mx-auto">
+        </fieldset>
+      </form>
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        <fieldset class="flex flex-col border">
+          <div class="p-1">
+            <input type="file" name="excel_file" accept=".xlsx" class="border rounded p-1 w-full">
+          </div>
+          <input type="submit" name="upload_excel" value="エクセルデータ登録" class="cursor-pointer text-white bg-blue-600 rounded p-1 mt-1 mx-auto">
+        </fieldset>
+      </form>
+    </div>
 
     <div class="flex flex-col items-center mt-8 w-1/6">
       {% for market in markets %}
