@@ -1,11 +1,11 @@
 from openpyxl import load_workbook
 
-def process_excel(file_path):
+def process_excel(excel_file):
     """
     Process Excel file
     Return list of item dictionaries
     """
-    wb = load_workbook(file_path, data_only=True)
+    wb = load_workbook(excel_file, data_only=True)
     ws = wb["出品リスト１"]
 
     products = []
