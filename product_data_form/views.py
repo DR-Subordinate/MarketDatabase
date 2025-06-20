@@ -64,8 +64,8 @@ def main(request):
                             serial_number=product["imprint"],
                             material_color=product["material_color"],
                             condition=product["condition"],
-                            detail=f"原価{int(product['cost_price']):,}",
-                            winning_bid=f"{int(product['winning_bid']):,}"
+                            detail=f"原価{product['cost_price']:,}",
+                            winning_bid=f"{product['winning_bid']:,}"
                         )
 
                     return redirect("product_data_form:main")
