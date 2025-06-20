@@ -4,6 +4,7 @@ from django.db.models import Q, F, Case, When, Value, IntegerField
 from django.forms import modelformset_factory
 from django.core.files.base import ContentFile
 from django.core.files import File
+from django.contrib import messages
 
 from .forms import ProductForm, MarketForm
 from .models import Product, Market, InvoicePDF
@@ -15,6 +16,7 @@ from datetime import datetime
 from itertools import chain
 from .generate_invoice_pdf import generate_invoice_pdf
 from .scrape_nbaa import NBAA
+from .process_excel_file_for_nbaa import process_excel
 
 from star_buyers_auction.models import AuctionProduct
 
@@ -30,6 +32,46 @@ def main(request):
             if pdf_id:
                 pdf = get_object_or_404(InvoicePDF, id=pdf_id)
                 return FileResponse(pdf.file.open('rb'), filename=os.path.basename(pdf.file.name))
+        elif "upload_excel" in request.POST:
+            excel_file = request.FILES.get("excel_file")
+
+            if excel_file:
+                try:
+                    try:
+                        filename = excel_file.name.replace(".xlsx", "")
+                        filename_parts = filename.split("-")
+                        market_name = filename_parts[0]
+                        market_date = f"{filename_parts[1]}-{filename_parts[2]}-{filename_parts[3]}"
+
+                    except Exception as e:
+                        messages.error(request, 'ファイル名の形式が正しくありません: 市場名-YYYY-MM-DD.xlsx')
+                        return redirect("product_data_form:main")
+
+                    market = Market.objects.create(
+                        name=market_name,
+                        date=market_date
+                        )
+
+                    products = process_excel(excel_file)
+
+                    for product in products:
+                        Product.objects.create(
+                            market=market,
+                            number=product["number"],
+                            brand_name=product["brand_name"],
+                            name=product["name"],
+                            model_number=product["model_number"],
+                            serial_number=product["imprint"],
+                            material_color=product["material_color"],
+                            condition=product["condition"],
+                            detail=f"原価{int(product['cost_price']):,}",
+                            winning_bid=f"{int(product['winning_bid']):,}"
+                        )
+
+                    return redirect("product_data_form:main")
+
+                except Exception as e:
+                    messages.error(request, f'ファイル処理エラー: {str(e)}')
         else:
             market_form = MarketForm(request.POST)
             if market_form.is_valid():
