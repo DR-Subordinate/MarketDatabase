@@ -102,5 +102,11 @@
     </div>
   </section>
 
+  {% if messages %}
+    {% for message in messages %}
+        <div class="text-red-500">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
   <script src="{% static 'js/product_data_form.js' %}"></script>
 {% endblock %}
