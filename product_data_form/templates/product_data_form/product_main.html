@@ -7,7 +7,7 @@
 {% block content %}
   <section>
     <h1 class="text-3xl text-center font-bold my-2">
-      {% if "ギャラリーレア" in market.name %}
+      {% if "ギャラリーレア" in market.name or "出品" in market.name %}
         <form method="post" class="mr-4 inline-block">
           {% csrf_token %}
           <input type="hidden" name="fetch_market_data" value="true">
