@@ -6,6 +6,10 @@
 
 {% block content %}
   <section>
+    {% if progress_message %}
+      <p class="text-green-600 mb-4"><strong>{{ progress_message }}</strong></p>
+    {% endif %}
+
     <h1 class="text-3xl text-center font-bold my-2">
       {% if "ギャラリーレア" in market.name or "出品" in market.name %}
         <form method="post" class="mr-4 inline-block">
@@ -112,6 +116,12 @@
       </table>
     </form>
   </section>
+
+  {% if continue_processing %}
+    <script>
+      document.querySelector('form input[name="fetch_market_data"]').closest('form').submit();
+    </script>
+  {% endif %}
 
   <script src="{% static 'js/product_data_form.js' %}"></script>
 {% endblock %}
