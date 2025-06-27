@@ -88,66 +88,168 @@ def product_main(request, market_name, market_date):
     ProductFormSetEdit = modelformset_factory(Product, form=ProductForm, extra=0, can_delete=True)
 
     if request.method == "POST" and request.POST.get("fetch_market_data") == "true":
-        if not load_dotenv(dotenv_path=".env.local"):
-            email = os.environ["EMAIL_NBAA"]
-            password = os.environ["PASSWORD_NBAA"]
-        else:
-            email = os.environ["EMAIL_NBAA"]
-            password = os.environ["PASSWORD_NBAA"]
+        # Check if we already have products in the session (for continued processing)
+        if 'nbaa_products_to_update' not in request.session:
+            # First request: get products to update
+            if not load_dotenv(dotenv_path=".env.local"):
+                email = os.environ["EMAIL_NBAA"]
+                password = os.environ["PASSWORD_NBAA"]
+            else:
+                email = os.environ["EMAIL_NBAA"]
+                password = os.environ["PASSWORD_NBAA"]
 
-        if email and password:
+            if email and password:
+                nbaa = NBAA(email=email, password=password)
+
+                if nbaa.login():
+                    products_to_update = Product.objects.filter(
+                        market=market,
+                        number__isnull=False,
+                    )
+
+                    if products_to_update.exists():
+                        # Store product data in session
+                        product_data = []
+                        for product in products_to_update:
+                            if "-" in product.number:
+                                box, branch = product.number.split("-", 1)
+                                product_data.append({
+                                    'id': product.id,
+                                    'box': box.strip(),
+                                    'branch': branch.strip(),
+                                    'date': market_date
+                                })
+
+                        request.session['nbaa_products_to_update'] = product_data
+                        request.session['nbaa_processing_index'] = 0
+                    else:
+                        return redirect("product_data_form:product_main", market_name=market_name, market_date=market_date)
+
+        # Continue processing: execute batch processing
+        product_data = request.session['nbaa_products_to_update']
+        start_index = request.session['nbaa_processing_index']
+
+        BATCH_SIZE = 10
+        batch_data = product_data[start_index:start_index + BATCH_SIZE]
+
+        if batch_data:
+            # NBAA login
+            if not load_dotenv(dotenv_path=".env.local"):
+                email = os.environ["EMAIL_NBAA"]
+                password = os.environ["PASSWORD_NBAA"]
+            else:
+                email = os.environ["EMAIL_NBAA"]
+                password = os.environ["PASSWORD_NBAA"]
+
             nbaa = NBAA(email=email, password=password)
 
             if nbaa.login():
-                products_to_update = Product.objects.filter(
-                    market=market,
-                    number__isnull=False,
-                )
+                # Prepare batch data
+                dates = [item['date'] for item in batch_data]
+                box_numbers = [item['box'] for item in batch_data]
+                branch_numbers = [item['branch'] for item in batch_data]
 
-                if products_to_update.exists():
-                    dates = [market_date] * products_to_update.count()
-                    box_numbers = []
-                    branch_numbers = []
+                # Collect data from NBAA
+                scraped_data = nbaa.collect_product_data(dates, box_numbers, branch_numbers)
+                print(scraped_data)
 
-                    for product in products_to_update:
-                        # Assuming product.number format is like "160-3"
-                        if "-" in product.number:
-                            box, branch = product.number.split("-", 1)
-                            box_numbers.append(box.strip())
-                            branch_numbers.append(branch.strip())
-                        else:
-                            # Handle products without proper number format
+                # Update products with scraped data
+                for i, item in enumerate(batch_data):
+                    if i < len(scraped_data):
+                        try:
+                            product = Product.objects.get(id=item['id'])
+                            data = scraped_data[i]
+                            print(data)
+
+                            if data["winning_bid"]:
+                                product.winning_bid = data["winning_bid"]
+
+                            if data["image_path"]:
+                                if os.path.exists(data["image_path"]):
+                                    with open(data["image_path"], "rb") as img_file:
+                                        product.image.save(
+                                            os.path.basename(data["image_path"]),
+                                            File(img_file),
+                                            save=False
+                                        )
+
+                            product.save()
+                        except Product.DoesNotExist:
                             continue
 
-                    # Collect data from NBAA
-                    if box_numbers and branch_numbers:
-                        scraped_data = nbaa.collect_product_data(dates, box_numbers, branch_numbers)
-                        print(scraped_data)
+                # Clean up temporary image files
+                for data in scraped_data:
+                    if data.get("image_path") and os.path.exists(data["image_path"]):
+                        os.remove(data["image_path"])
 
-                        # Update products with scraped data
-                        for i, product in enumerate(products_to_update):
-                            if i < len(scraped_data):
-                                data = scraped_data[i]
-                                print(data)
+                # Update session
+                request.session['nbaa_processing_index'] = start_index + BATCH_SIZE
 
-                                if data["winning_bid"]:
-                                    product.winning_bid = data["winning_bid"]
+                # Prepare progress message
+                progress_message = f"処理中... {start_index + BATCH_SIZE}/{len(product_data)}件"
 
-                                if data["image_path"]:
-                                    if os.path.exists(data["image_path"]):
-                                        with open(data["image_path"], "rb") as img_file:
-                                            product.image.save(
-                                                os.path.basename(data["image_path"]),
-                                                File(img_file),
-                                                save=False
-                                            )
+                # If there are still products to process
+                if start_index + BATCH_SIZE < len(product_data):
+                    # Prepare formsets
+                    new_formset = ProductFormSetNew(queryset=Product.objects.none(), prefix='new')
+                    all_products = Product.objects.filter(market=market)
+                    products_without_prices_count = all_products.filter(
+                        Q(price__isnull=True) | Q(price='')
+                    ).count()
 
-                                product.save()
+                    if products_without_prices_count == 0 and all_products.exists():
+                        bidden_products = all_products.filter(is_bidden=True)
+                        non_bidden_products = all_products.filter(is_bidden=False)
 
-                        # Clean up temporary image files
-                        for data in scraped_data:
-                            if data["image_path"] and os.path.exists(data["image_path"]):
-                                os.remove(data["image_path"])
+                        def sort_product_numbers(queryset):
+                            products = list(queryset)
+                            def get_sort_key(product):
+                                if not product.number:
+                                    return (0, 0)
+                                if '-' in product.number:
+                                    parts = product.number.split('-', 1)
+                                    try:
+                                        return (int(parts[0]), int(parts[1]))
+                                    except ValueError:
+                                        return (0, 0)
+                                else:
+                                    try:
+                                        return (int(product.number), 0)
+                                    except ValueError:
+                                        return (0, 0)
+                            products.sort(key=get_sort_key)
+                            return products
+
+                        sorted_bidden = sort_product_numbers(bidden_products)
+                        sorted_non_bidden = sort_product_numbers(non_bidden_products)
+                        all_sorted_products = sorted_bidden + sorted_non_bidden
+                        ordered_ids = [p.id for p in all_sorted_products]
+
+                        if not ordered_ids:
+                            queryset = Product.objects.none()
+                        else:
+                            preserved = Case(
+                                *[When(id=id, then=Value(i)) for i, id in enumerate(ordered_ids)],
+                                output_field=IntegerField()
+                            )
+                            queryset = Product.objects.filter(id__in=ordered_ids).order_by(preserved)
+                    else:
+                        queryset = all_products.order_by('-is_bidden')
+
+                    edit_formset = ProductFormSetEdit(queryset=queryset, prefix='edit')
+
+                    context = {
+                        "new_formset": new_formset,
+                        "edit_formset": edit_formset,
+                        "market": market,
+                        "progress_message": progress_message,
+                        "continue_processing": True
+                    }
+                    return render(request, "product_data_form/product_main.html", context)
+                else:
+                    # Processing complete: clear session
+                    request.session.pop('nbaa_products_to_update', None)
+                    request.session.pop('nbaa_processing_index', None)
 
         return redirect("product_data_form:product_main", market_name=market_name, market_date=market_date)
 
