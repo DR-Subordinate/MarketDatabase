@@ -96,10 +96,12 @@ def index(request):
                 else:
                     request.session.flush()
             else:
+                request.session.flush()
                 return render(request, "star_buyers_auction/index.html",
                             {"error_message": "ログインに失敗しました。"})
 
         except Exception as e:
+            request.session.flush()
             return render(request, "star_buyers_auction/index.html",
                         {"error_message": f"エラーが発生しました: {str(e)}"})
 
