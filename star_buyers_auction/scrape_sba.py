@@ -290,18 +290,21 @@ class SBA:
                 if response.ok:
                     print(f"  ✓ Successfully accessed product page")
                     soup = BeautifulSoup(response.text, "html.parser")
+
                     script_tags = soup.select("script")
+                    product_data_string = None
 
-                    if len(script_tags) < 3:
-                        print(f"  ✗ Not enough script tags found ({len(script_tags)} found)")
-                        continue
+                    for script_tag in script_tags:
+                        if script_tag.string and "window.item_data" in script_tag.string:
+                            print(f"    Found product data in script tag")
+                            product_data_string = script_tag.string
+                            break
 
-                    product_data_string = script_tags[2].string
                     if not product_data_string:
-                        print(f"  ✗ No script content found")
+                        print(f"  ✗ No window.item_data found in {len(script_tags)} script tags")
                         continue
 
-                    print(f"  ✓ Script content found, extracting data...")
+                    print(f"  ✓ Product data script found, extracting data...")
 
                     brand_name, product_name = self._get_names(product_data_string)
                     current_bidding_price = self._get_current_bidding_price(product_data_string)
