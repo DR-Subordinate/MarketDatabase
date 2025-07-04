@@ -2,6 +2,8 @@ import os
 import re
 import io
 from urllib.parse import urlparse
+import time
+import random
 
 import requests
 from bs4 import BeautifulSoup
@@ -273,35 +275,63 @@ class SBA:
             raise ValueError("Not logged in.")
 
         product_data = []
+        print(f"Starting to process {len(product_links)} products...")
 
-        for product_link in product_links:
-            response = self.session.get(product_link, headers=self.headers)
-            if response.ok:
-                soup = BeautifulSoup(response.text, "html.parser")
-                product_data_string = soup.select("script")[2].string
+        for i, product_link in enumerate(product_links):
+            print(f"Processing {i+1}/{len(product_links)}: {product_link}")
 
-                brand_name, product_name = self._get_names(product_data_string)
-                current_bidding_price = self._get_current_bidding_price(product_data_string)
-                ended_at = self._get_ended_at(product_data_string)
-                data_rank = self._get_data_rank(soup)
-                memo = self._get_memo(product_data_string)
-                katakana = self._extract_katakana_from_memo(memo)
-                price = self._convert_katakana_into_price(katakana)
-                image = self._get_image(product_data_string)
+            if i > 0:
+                delay = random.uniform(10, 30)
+                print(f"  Waiting {delay:.1f} seconds to avoid rate limiting...")
+                time.sleep(delay)
 
-                product_datum = {
-                    "brand_name": brand_name,
-                    "product_name": product_name,
-                    "current_bidding_price": current_bidding_price,
-                    "ended_at": ended_at,
-                    "data_rank": data_rank,
-                    "memo": memo,
-                    "price": price,
-                    "image": image,
-                    "product_link": product_link
-                }
-                product_data.append(product_datum)
+            try:
+                response = self.session.get(product_link, headers=self.headers)
+                if response.ok:
+                    print(f"  ✓ Successfully accessed product page")
+                    soup = BeautifulSoup(response.text, "html.parser")
+                    script_tags = soup.select("script")
 
+                    if len(script_tags) < 3:
+                        print(f"  ✗ Not enough script tags found ({len(script_tags)} found)")
+                        continue
+
+                    product_data_string = script_tags[2].string
+                    if not product_data_string:
+                        print(f"  ✗ No script content found")
+                        continue
+
+                    print(f"  ✓ Script content found, extracting data...")
+
+                    brand_name, product_name = self._get_names(product_data_string)
+                    current_bidding_price = self._get_current_bidding_price(product_data_string)
+                    ended_at = self._get_ended_at(product_data_string)
+                    data_rank = self._get_data_rank(soup)
+                    memo = self._get_memo(product_data_string)
+                    katakana = self._extract_katakana_from_memo(memo)
+                    price = self._convert_katakana_into_price(katakana)
+                    image = self._get_image(product_data_string)
+
+                    product_datum = {
+                        "brand_name": brand_name,
+                        "product_name": product_name,
+                        "current_bidding_price": current_bidding_price,
+                        "ended_at": ended_at,
+                        "data_rank": data_rank,
+                        "memo": memo,
+                        "price": price,
+                        "image": image,
+                        "product_link": product_link
+                    }
+                    product_data.append(product_datum)
+                    print(f"  ✓ Successfully processed: {brand_name} {product_name}")
+                else:
+                    print(f"  ✗ Failed to access product page: {response.status_code}")
+            except Exception as e:
+                print(f"  ✗ Error processing product: {str(e)}")
+                continue
+
+        print(f"Processing complete. Successfully processed: {len(product_data)} products")
         return product_data
 
 
@@ -315,10 +345,7 @@ def main():
     if sba.login():
         product_links = sba.collect_product_links()
 
-        product_data = sba.collect_product_data(product_links)
-
-        print(product_data)
-        print(f"Total products found: {len(product_data)}")
+        sba.collect_product_data(product_links)
 
 if __name__ == "__main__":
     main()
