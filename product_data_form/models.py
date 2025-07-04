@@ -6,6 +6,14 @@ class Market(models.Model):
     name = models.CharField(max_length=200)
     invoice_pdf = models.FileField(upload_to='invoices/', null=True, blank=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'date'],
+                name='unique_market_name_date'
+            )
+        ]
+
     def __str__(self):
         return f"{self.name} {self.date}"
 
