@@ -281,7 +281,7 @@ class SBA:
             print(f"Processing {i+1}/{len(product_links)}: {product_link}")
 
             if i > 0:
-                delay = random.uniform(10, 30)
+                delay = random.uniform(1, 5)
                 print(f"  Waiting {delay:.1f} seconds to avoid rate limiting...")
                 time.sleep(delay)
 
