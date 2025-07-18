@@ -94,7 +94,8 @@ class SBA:
         name_pattern = r"name: '([^']*)'"
         name_match = re.search(name_pattern, product_data_string)
         name_text = name_match.group(1)
-        brand_name, product_name = re.split(r"\s", name_text, 1)
+        name_text = name_text.encode().decode("unicode_escape")
+        brand_name, product_name = re.split(r"\s", name_text, maxsplit=1)
         return brand_name, product_name
 
     def _get_current_bidding_price(self, product_data_string):
@@ -107,7 +108,7 @@ class SBA:
         Returns:
             str: Formatted current bidding price with comma separators
         """
-        current_bidding_price_pattern = r"current_bidding_price: '(\d+)'"
+        current_bidding_price_pattern = r"current_bidding_price: (\d+)"
         current_bidding_price_match = re.search(current_bidding_price_pattern, product_data_string)
         current_bidding_price_text = current_bidding_price_match.group(1)
         current_bidding_price = "{:,}".format(int(current_bidding_price_text))
@@ -123,9 +124,10 @@ class SBA:
         Returns:
             str: End date in format 'MM/DD/YY', excluding time component
         """
-        ended_at_pattern = r"end_at: '(\d+/\d+/\d+) \d+:\d+'"
+        ended_at_pattern = r"end_at: '(\d+\\/\d+\\/\d+) \d+:\d+'"
         ended_at_match = re.search(ended_at_pattern, product_data_string)
         ended_at = ended_at_match.group(1)
+        ended_at = ended_at.replace("\\/", "/")
         return ended_at
 
     def _get_data_rank(self, soup):
@@ -152,9 +154,10 @@ class SBA:
         Returns:
             str: Memo text contained between backticks
         """
-        memo_pattern = r'memo: `([^`]*)`'
+        memo_pattern = r"\bmemo: '([^']*)'"
         memo_match = re.search(memo_pattern, product_data_string)
         memo = memo_match.group(1)
+        memo = memo.encode().decode("unicode_escape")
         return memo
 
     def _extract_katakana_from_memo(self, memo):
@@ -244,7 +247,8 @@ class SBA:
         image_url_pattern = r"image_urls: JSON\.parse\('\[\\u0022(.*?)\\u0022"
         image_url_match = re.search(image_url_pattern, product_data_string)
         image_url = image_url_match.group(1)
-        image_url = image_url.replace("\\\\\\/", "/")
+        image_url = image_url.replace("\\", "")
+        image_url = image_url.replace("u0026", "&")
 
         filename = os.path.basename(urlparse(image_url).path)
 
