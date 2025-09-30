@@ -31,9 +31,10 @@
         {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
         <fieldset class="flex flex-col border">
           <div class="p-1">
-            <input type="file" name="excel_file" accept=".xlsx" class="border rounded p-1 w-full">
+            <input type="file" name="excel_file" accept=".xlsx,.pdf" class="border rounded p-1 w-full">
           </div>
-          <input type="submit" name="upload_excel" value="エクセルデータ登録" class="cursor-pointer text-white bg-blue-600 rounded p-1 mt-1 mx-auto">
+          <input type="submit" name="upload_excel" value="ファイルアップロード" class="cursor-pointer text-white bg-blue-600 rounded p-1 mt-1 mx-auto">
+          <p class="text-center text-sm text-gray-600 mt-1">Excel/PDF</p>
         </fieldset>
       </form>
     </div>
