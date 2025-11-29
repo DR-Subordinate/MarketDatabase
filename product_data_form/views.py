@@ -16,6 +16,7 @@ from datetime import datetime
 from itertools import chain
 from .generate_invoice_pdf import generate_invoice_pdf
 from .scrape_nbaa import NBAA
+from .scrape_komehyo import Komehyo
 from .process_excel_file_for_nbaa import process_excel
 
 from star_buyers_auction.models import AuctionProduct
@@ -252,6 +253,199 @@ def product_main(request, market_name, market_date):
                     request.session.pop('nbaa_processing_index', None)
 
         return redirect("product_data_form:product_main", market_name=market_name, market_date=market_date)
+
+        # --- Komehyo integration (delayed / batched like NBAA/SBA) ---
+    if request.method == "POST" and request.POST.get("fetch_komehyo_data") == "true":
+        # 1) Keep the Komehyo URL in session so we don't have to re-enter it
+        if "komehyo_url" in request.session:
+            komehyo_url = request.session["komehyo_url"]
+        else:
+            komehyo_url = (request.POST.get("komehyo_url") or "").strip()
+            if not komehyo_url:
+                messages.error(request, "KOMEHYO URL is required.")
+                return redirect("product_data_form:product_main", market_name=market_name, market_date=market_date)
+            request.session["komehyo_url"] = komehyo_url
+
+        # 2) Load Komehyo credentials
+        if not load_dotenv(dotenv_path=".env.local"):
+            email = os.environ.get("EMAIL_KOMEHYO")
+            password = os.environ.get("PASSWORD_KOMEHYO")
+        else:
+            email = os.environ.get("EMAIL_KOMEHYO")
+            password = os.environ.get("PASSWORD_KOMEHYO")
+
+        if not email or not password:
+            messages.error(request, "EMAIL_KOMEHYO or PASSWORD_KOMEHYO is not set.")
+            # cleanup session just in case
+            request.session.pop("komehyo_url", None)
+            request.session.pop("komehyo_product_links", None)
+            request.session.pop("komehyo_processing_index", None)
+            return redirect("product_data_form:product_main", market_name=market_name, market_date=market_date)
+
+        komehyo = Komehyo(email=email, password=password)
+
+        if not komehyo.login():
+            messages.error(request, "Failed to log in to Komehyo.")
+            request.session.pop("komehyo_url", None)
+            request.session.pop("komehyo_product_links", None)
+            request.session.pop("komehyo_processing_index", None)
+            return redirect("product_data_form:product_main", market_name=market_name, market_date=market_date)
+
+        # 3) First step: collect product links and store in session
+        if "komehyo_product_links" not in request.session:
+            product_links = komehyo.collect_product_links(komehyo_url)
+            if not product_links:
+                messages.warning(request, "No products were found on the Komehyo page.")
+                request.session.pop("komehyo_url", None)
+                return redirect("product_data_form:product_main", market_name=market_name, market_date=market_date)
+
+            request.session["komehyo_product_links"] = product_links
+            request.session["komehyo_processing_index"] = 0
+
+        product_links = request.session["komehyo_product_links"]
+        start_index = request.session["komehyo_processing_index"]
+
+        BATCH_SIZE = 10
+        batch_links = product_links[start_index:start_index + BATCH_SIZE]
+
+        # 4) If no more links => finish & cleanup
+        if not batch_links:
+            total = len(product_links)
+            messages.success(request, f"Komehyo scraping complete. {total} items processed.")
+            request.session.pop("komehyo_url", None)
+            request.session.pop("komehyo_product_links", None)
+            request.session.pop("komehyo_processing_index", None)
+            return redirect("product_data_form:product_main", market_name=market_name, market_date=market_date)
+
+        # 5) Scrape current batch
+        scraped_products = komehyo.collect_product_data(batch_links)
+
+        imported_count = 0
+
+        for data in scraped_products:
+            lot_no = (data.get("lot_no") or "").strip()
+            if not lot_no:
+                continue  # Without ロットNo we can't map to Product.number
+
+            # 市場番号 => ロットNo
+            product, created = Product.objects.get_or_create(
+                market=market,
+                number=lot_no,
+                defaults={}
+            )
+
+            brand_name = (data.get("brand_name") or "").strip()
+            serial_number = (data.get("serial_number") or "").strip()
+            rank = (data.get("rank") or "").strip()
+            memo = (data.get("memo") or "").strip()
+            current_price = (data.get("current_price") or "").strip()
+            image_tuple = data.get("image")  # (bytes, filename) or None
+
+            # 市場ブランド名 => コメ兵の商品名の先頭のブランド（カタカナ）
+            if brand_name and not product.brand_name:
+                product.brand_name = brand_name
+
+            # 市場製造番号 => シリアル／製番
+            if serial_number and not product.serial_number:
+                product.serial_number = serial_number
+
+            # 市場状態 => ランク
+            if rank and not product.condition:
+                product.condition = rank
+
+            # 市場詳細・備考 => メモ
+            if memo:
+                if not product.detail:
+                    product.detail = memo
+                # if you ever want to append instead:
+                # else:
+                #     product.detail = (product.detail + "\n" + memo).strip()
+
+            # 市場落札価格 => 現在価格
+            if current_price:
+                product.winning_bid = current_price  # always overwrite with latest
+
+            # 市場画像 => コメ兵の1枚目の画像
+            if image_tuple and hasattr(product, "image"):
+                image_bytes, filename = image_tuple
+                if image_bytes and filename and not product.image:
+                    product.image.save(
+                        filename,
+                        ContentFile(image_bytes),
+                        save=False,
+                    )
+
+            product.save()
+            imported_count += 1
+
+        # 6) Update session index
+        request.session["komehyo_processing_index"] = start_index + BATCH_SIZE
+
+        progress_message = f"処理中... {min(start_index + BATCH_SIZE, len(product_links))}/{len(product_links)}件 (Komehyo)"
+
+        # 7) Rebuild formsets (same logic as NBAA branch) and re-render with auto-continue
+        ProductFormSetNew = modelformset_factory(Product, form=ProductForm, extra=200)
+        ProductFormSetEdit = modelformset_factory(Product, form=ProductForm, extra=0, can_delete=True)
+
+        new_formset = ProductFormSetNew(queryset=Product.objects.none(), prefix='new')
+
+        all_products = Product.objects.filter(market=market)
+        products_without_prices_count = all_products.filter(
+            Q(price__isnull=True) | Q(price='')
+        ).count()
+
+        if products_without_prices_count == 0 and all_products.exists():
+            bidden_products = all_products.filter(is_bidden=True)
+            non_bidden_products = all_products.filter(is_bidden=False)
+
+            def sort_product_numbers(queryset):
+                products = list(queryset)
+
+                def get_sort_key(product):
+                    if not product.number:
+                        return (0, 0)
+                    if '-' in product.number:
+                        parts = product.number.split('-', 1)
+                        try:
+                            return (int(parts[0]), int(parts[1]))
+                        except ValueError:
+                            return (0, 0)
+                    else:
+                        try:
+                            return (int(product.number), 0)
+                        except ValueError:
+                            return (0, 0)
+
+                products.sort(key=get_sort_key)
+                return products
+
+            sorted_bidden = sort_product_numbers(bidden_products)
+            sorted_non_bidden = sort_product_numbers(non_bidden_products)
+            all_sorted_products = sorted_bidden + sorted_non_bidden
+            ordered_ids = [p.id for p in all_sorted_products]
+
+            if not ordered_ids:
+                queryset = Product.objects.none()
+            else:
+                preserved = Case(
+                    *[When(id=id, then=Value(i)) for i, id in enumerate(ordered_ids)],
+                    output_field=IntegerField()
+                )
+                queryset = Product.objects.filter(id__in=ordered_ids).order_by(preserved)
+        else:
+            queryset = all_products.order_by('-is_bidden')
+
+        edit_formset = ProductFormSetEdit(queryset=queryset, prefix='edit')
+
+        context = {
+            "new_formset": new_formset,
+            "edit_formset": edit_formset,
+            "market": market,
+            "progress_message": progress_message,
+            "continue_processing": True,
+        }
+        return render(request, "product_data_form/product_main.html", context)
+
 
     if request.method == "POST":
         new_formset = ProductFormSetNew(request.POST, request.FILES, prefix='new', queryset=Product.objects.none())
