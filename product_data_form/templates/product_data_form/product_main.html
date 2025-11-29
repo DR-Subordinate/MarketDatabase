@@ -152,7 +152,13 @@
 
   {% if continue_processing %}
     <script>
-      document.querySelector('form input[name="fetch_market_data"]').closest('form').submit();
+      const nbaaInput = document.querySelector('form input[name="fetch_market_data"]');
+      const komehyoInput = document.querySelector('form input[name="fetch_komehyo_data"]');
+      const targetInput = nbaaInput || komehyoInput;
+
+      if (targetInput) {
+        targetInput.closest('form').submit();
+      }
     </script>
   {% endif %}
 
