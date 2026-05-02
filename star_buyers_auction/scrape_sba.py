@@ -94,7 +94,6 @@ class SBA:
         name_pattern = r"name: '([^']*)'"
         name_match = re.search(name_pattern, product_data_string)
         name_text = name_match.group(1)
-        name_text = name_text.encode().decode("unicode_escape")
         brand_name, product_name = re.split(r"\s", name_text, maxsplit=1)
         return brand_name, product_name
 
@@ -157,7 +156,6 @@ class SBA:
         memo_pattern = r"\bmemo: '([^']*)'"
         memo_match = re.search(memo_pattern, product_data_string)
         memo = memo_match.group(1)
-        memo = memo.encode().decode("unicode_escape")
         return memo
 
     def _extract_katakana_from_memo(self, memo):
