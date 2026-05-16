@@ -80,6 +80,105 @@ class SBA:
 
         return product_links
 
+    def _get_item_id_from_url(self, product_link):
+        """
+        Extract item ID from product URL.
+
+        Example:
+        https://www.starbuyers-global-auction.com/item/2490537
+        -> 2490537
+        """
+        return urlparse(product_link).path.rstrip("/").split("/")[-1]
+
+
+    def _get_item_id_from_product_data(self, product_data_string):
+        """
+        Extract item ID from window.item_data.
+        """
+        item_id_match = re.search(r"\bid:\s*(\d+)", product_data_string)
+
+        if not item_id_match:
+            return ""
+
+        return item_id_match.group(1)
+
+
+    def _extract_product_data_string(self, html):
+        """
+        Extract BeautifulSoup object and window.item_data script content.
+        """
+        soup = BeautifulSoup(html, "html.parser")
+
+        for script_tag in soup.select("script"):
+            script_text = script_tag.string or script_tag.get_text()
+
+            if script_text and "window.item_data" in script_text:
+                return soup, script_text
+
+        return soup, None
+
+
+    def _fetch_matching_product_page(self, product_link, max_retries=5):
+        """
+        Fetch product page and verify that URL item ID matches window.item_data.id.
+
+        This prevents saving another product's data under the wrong product_link.
+        """
+        expected_item_id = self._get_item_id_from_url(product_link)
+
+        for attempt in range(1, max_retries + 1):
+            response = self.session.get(
+                product_link,
+                headers={
+                    **self.headers,
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache",
+                },
+                timeout=30,
+            )
+
+            if not response.ok:
+                print(
+                    f"  ✗ Failed to access product page: "
+                    f"status={response.status_code}, "
+                    f"attempt={attempt}, "
+                    f"url={product_link}"
+                )
+                time.sleep(2)
+                continue
+
+            soup, product_data_string = self._extract_product_data_string(response.text)
+
+            if not product_data_string:
+                print(
+                    f"  ✗ No window.item_data found: "
+                    f"attempt={attempt}, "
+                    f"url={product_link}"
+                )
+                time.sleep(2)
+                continue
+
+            actual_item_id = self._get_item_id_from_product_data(product_data_string)
+
+            if actual_item_id == expected_item_id:
+                print(f"  ✓ Item ID matched: {actual_item_id}")
+                return soup, product_data_string
+
+            print(
+                f"  ✗ Item ID mismatch: "
+                f"url_item_id={expected_item_id}, "
+                f"html_item_id={actual_item_id}, "
+                f"attempt={attempt}, "
+                f"url={product_link}"
+            )
+
+            time.sleep(2)
+
+        raise RuntimeError(
+            f"Could not fetch matching product page after {max_retries} retries: "
+            f"{product_link}"
+        )
+
     def _get_names(self, product_data_string):
         """
         Extract brand name and product name from the product data string.
@@ -265,22 +364,21 @@ class SBA:
 
     def collect_product_data(self, product_links):
         """
-        Collect product data for given product links
+        Collect product data for given product links.
 
-        Args:
-            product_links: List of product URLs
-
-        Returns:
-            list: List of dictionaries containing product data
+        This method verifies that the product URL item ID matches
+        window.item_data.id before extracting and saving product data.
         """
         if not self.session:
             raise ValueError("Not logged in.")
 
         product_data = []
+        failed_links = []
+
         print(f"Starting to process {len(product_links)} products...")
 
         for i, product_link in enumerate(product_links):
-            print(f"Processing {i+1}/{len(product_links)}: {product_link}")
+            print(f"Processing {i + 1}/{len(product_links)}: {product_link}")
 
             if i > 0:
                 delay = random.uniform(1, 5)
@@ -288,56 +386,52 @@ class SBA:
                 time.sleep(delay)
 
             try:
-                response = self.session.get(product_link, headers=self.headers)
-                if response.ok:
-                    print(f"  ✓ Successfully accessed product page")
-                    soup = BeautifulSoup(response.text, "html.parser")
+                soup, product_data_string = self._fetch_matching_product_page(product_link)
 
-                    script_tags = soup.select("script")
-                    product_data_string = None
+                print("  ✓ Successfully accessed matching product page")
+                print("  ✓ Product data script found, extracting data...")
 
-                    for script_tag in script_tags:
-                        if script_tag.string and "window.item_data" in script_tag.string:
-                            print(f"    Found product data in script tag")
-                            product_data_string = script_tag.string
-                            break
+                brand_name, product_name = self._get_names(product_data_string)
+                current_bidding_price = self._get_current_bidding_price(product_data_string)
+                ended_at = self._get_ended_at(product_data_string)
+                data_rank = self._get_data_rank(soup)
+                memo = self._get_memo(product_data_string)
+                katakana = self._extract_katakana_from_memo(memo)
+                price = self._convert_katakana_into_price(katakana)
+                image = self._get_image(product_data_string)
 
-                    if not product_data_string:
-                        print(f"  ✗ No window.item_data found in {len(script_tags)} script tags")
-                        continue
+                product_datum = {
+                    "brand_name": brand_name,
+                    "product_name": product_name,
+                    "current_bidding_price": current_bidding_price,
+                    "ended_at": ended_at,
+                    "data_rank": data_rank,
+                    "memo": memo,
+                    "price": price,
+                    "image": image,
+                    "product_link": product_link,
+                    "item_id": self._get_item_id_from_url(product_link),
+                }
 
-                    print(f"  ✓ Product data script found, extracting data...")
+                product_data.append(product_datum)
 
-                    brand_name, product_name = self._get_names(product_data_string)
-                    current_bidding_price = self._get_current_bidding_price(product_data_string)
-                    ended_at = self._get_ended_at(product_data_string)
-                    data_rank = self._get_data_rank(soup)
-                    memo = self._get_memo(product_data_string)
-                    katakana = self._extract_katakana_from_memo(memo)
-                    price = self._convert_katakana_into_price(katakana)
-                    image = self._get_image(product_data_string)
+                print(f"  ✓ Successfully processed: {brand_name} {product_name}")
 
-                    product_datum = {
-                        "brand_name": brand_name,
-                        "product_name": product_name,
-                        "current_bidding_price": current_bidding_price,
-                        "ended_at": ended_at,
-                        "data_rank": data_rank,
-                        "memo": memo,
-                        "price": price,
-                        "image": image,
-                        "product_link": product_link
-                    }
-                    product_data.append(product_datum)
-                    print(f"  ✓ Successfully processed: {brand_name} {product_name}")
-                else:
-                    print(f"  ✗ Failed to access product page: {response.status_code}")
             except Exception as e:
-                print(f"  ✗ Error processing product: {str(e)}")
-                continue
+                import traceback
+
+                print(f"  ✗ Error processing product: {product_link}")
+                traceback.print_exc()
+                failed_links.append(product_link)
+
+        if failed_links:
+            raise RuntimeError(
+                f"Failed to process {len(failed_links)} products: {failed_links}"
+            )
 
         print(f"Processing complete. Successfully processed: {len(product_data)} products")
         return product_data
+
 
 
 def main():
@@ -348,7 +442,21 @@ def main():
     sba = SBA(email=EMAIL, password=PASSWORD, end_date="2025-05-17")
 
     if sba.login():
+        from collections import Counter
         product_links = sba.collect_product_links()
+
+        keys = [
+            urlparse(link).path.rstrip("/")
+            for link in product_links
+        ]
+
+        counter = Counter(keys)
+
+        print("raw count:", len(product_links))
+        print("unique count:", len(counter))
+
+        print("/item/2488610 count:", counter["/item/2488610"])
+        print("/item/2488626 count:", counter["/item/2488626"])
 
         sba.collect_product_data(product_links)
 
